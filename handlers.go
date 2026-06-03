@@ -44,23 +44,23 @@ type Specifications struct {
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
+	// write the index.html page
 	w.Header().Set("Content-Type", "text/html")
-	w.WriteHeader(http.StatusBadRequest)
-
 	tmpl := template.Must(template.ParseFiles("index.html"))
 	tmpl.Execute(w, nil)
+	// get the file handle and check for errors
 	file, err := os.Open("api/data.json")
 	if err != nil {
-		http.Error(w, "data not found", http.StatusInternalServerError)
+		http.Error(w, "json file not found", http.StatusInternalServerError)
 		return
 	}
 	defer file.Close()
 
 	var d Data
-
+	// read the json data and convert it to our go struct
 	err = json.NewDecoder(file).Decode(&d)
 	if err != nil {
-		http.Error(w, "bad data", http.StatusInternalServerError)
+		http.Error(w, "data error", http.StatusInternalServerError)
 		return
 	}
 	tmpl.Execute(w, d.CarModels)

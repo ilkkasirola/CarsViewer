@@ -7,7 +7,8 @@
         <link rel="stylesheet" href="static/style.css">
         {{range .}}
         <div>
-            <img src="/api/img/{{.Image}}" alt="{{.Name}}">
+            <img src="/api/img/{{.Image}}">
+            <p>{{.Name}}</p>
         </div>
         {{end}}
     </body>
