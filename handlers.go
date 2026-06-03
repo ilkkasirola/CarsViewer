@@ -1,8 +1,10 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"net/http"
+	"os"
 )
 
 type Data struct {
@@ -44,6 +46,22 @@ type Specifications struct {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html")
 	w.WriteHeader(http.StatusBadRequest)
+
 	tmpl := template.Must(template.ParseFiles("index.html"))
 	tmpl.Execute(w, nil)
+	file, err := os.Open("api/data.json")
+	if err != nil {
+		http.Error(w, "data not found", http.StatusInternalServerError)
+		return
+	}
+	defer file.Close()
+
+	var d Data
+
+	err = json.NewDecoder(file).Decode(&d)
+	if err != nil {
+		http.Error(w, "bad data", http.StatusInternalServerError)
+		return
+	}
+	tmpl.Execute(w, d.CarModels)
 }

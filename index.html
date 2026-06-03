@@ -4,6 +4,11 @@
     </head>
     <body>
         <h1>cars</h1>
+        <link rel="stylesheet" href="static/style.css">
+        {{range .}}
+        <div>
+            <img src="/api/img/{{.Image}}" alt="{{.Name}}">
+        </div>
+        {{end}}
     </body>
-
 </html>
