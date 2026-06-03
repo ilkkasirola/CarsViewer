@@ -9,7 +9,7 @@ type Data struct {
 	Manufacturers []Manufacturer   `json:"manufacturers"`
 	CarModels     []CarModel       `json:"carModels"`
 	Categories    []Category       `json:"categories"`
-	Spec          []Specifications `json:"specifications"`
+	Specs         []Specifications `json:"specifications"`
 }
 
 type Manufacturer struct {
