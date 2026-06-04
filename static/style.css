@@ -1,5 +1,22 @@
 img {
-    width: 200px;
+    width: 250px;
     height: 150px;
-    object-fit: cover;
+    border-radius: 10px;
+  border: 2px solid black;
+  
+}
+
+img:hover {
+    cursor: pointer;
+   box-shadow: 0 0 2px 1px grey;
+}
+
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 20px;
+}
+
+p {
+   padding: 0px 40px 20px 40px; 
 }
