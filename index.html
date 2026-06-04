@@ -1,14 +1,15 @@
 <html>
     <head>
         <title>cars-viewer</title>
+        <link rel="stylesheet" href="static/style.css">
     </head>
     <body>
-        <h1>cars</h1>
-        <link rel="stylesheet" href="static/style.css">
+        <h1>cars-viewer</h1>
+        
         <div class="grid">
         {{range .}}
         <div>
-            <img src="/api/img/{{.Image}}">
+            <img src="http://localhost:3000/api/images/{{.Image}}">
             <p>{{.Name}}</p>
         </div>
         {{end}}

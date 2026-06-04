@@ -1,3 +1,7 @@
+h1 {
+    text-align: center;
+}
+
 img {
     width: 250px;
     height: 150px;
@@ -8,7 +12,7 @@ img {
 
 img:hover {
     cursor: pointer;
-   box-shadow: 0 0 2px 1px grey;
+   box-shadow: 0 0 15px 5px grey;
 }
 
 .grid {

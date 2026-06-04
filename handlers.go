@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"html/template"
 	"net/http"
-	"os"
 )
 
 type Data struct {
@@ -47,21 +46,22 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// write the index.html page
 	w.Header().Set("Content-Type", "text/html")
 	tmpl := template.Must(template.ParseFiles("index.html"))
-	tmpl.Execute(w, nil)
-	// get the file handle and check for errors
-	file, err := os.Open("api/data.json")
+
+	// get the response from api endpoint
+	resp, err := http.Get("http://localhost:3000/api/models")
 	if err != nil {
-		http.Error(w, "json file not found", http.StatusInternalServerError)
+		http.Error(w, "fetching failed", http.StatusInternalServerError)
 		return
 	}
-	defer file.Close()
+	defer resp.Body.Close()
 
-	var d Data
+	var cars []CarModel
+	err = json.NewDecoder(resp.Body).Decode(&cars)
 	// read the json data and convert it to our go struct
-	err = json.NewDecoder(file).Decode(&d)
 	if err != nil {
 		http.Error(w, "data error", http.StatusInternalServerError)
 		return
 	}
-	tmpl.Execute(w, d.CarModels)
+
+	tmpl.Execute(w, cars)
 }
