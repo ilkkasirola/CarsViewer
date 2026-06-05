@@ -2,16 +2,10 @@ package main
 
 import (
 	"encoding/json"
+	"fmt"
 	"html/template"
 	"net/http"
 )
-
-type Data struct {
-	Manufacturers []Manufacturer   `json:"manufacturers"`
-	CarModels     []CarModel       `json:"carModels"`
-	Categories    []Category       `json:"categories"`
-	Specs         []Specifications `json:"specifications"`
-}
 
 type Manufacturer struct {
 	ID           int    `json:"id"`
@@ -64,4 +58,28 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	tmpl.Execute(w, cars)
+}
+
+func carHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html")
+	tmpl := template.Must(template.ParseFiles("car.html"))
+
+	id := r.PathValue("id")
+
+	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/api/models/%s", id))
+	if err != nil {
+		http.Error(w, "fetching failed", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var car CarModel
+	err = json.NewDecoder(resp.Body).Decode(&car)
+	if err != nil {
+		http.Error(w, "data error decoding car", http.StatusInternalServerError)
+		return
+	}
+
+	tmpl.Execute(w, car)
 }

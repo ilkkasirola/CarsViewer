@@ -4,14 +4,16 @@
         <link rel="stylesheet" href="static/style.css">
     </head>
     <body>
-        <h1>cars-viewer</h1>
-        
+        <h1>cars-viewer</h1>  
         <div class="grid">
         {{range .}}
         <div>
-            <img src="http://localhost:3000/api/images/{{.Image}}">
-            <p>{{.Name}}</p>
+            <a href="/car/{{.ID}}">
+                <img src="http://localhost:3000/api/images/{{.Image}}">
+             </a>
+             <p>{{.Name}}</p>
         </div>
+       
         {{end}}
         </div>
     </body>
