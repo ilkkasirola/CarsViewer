@@ -39,7 +39,7 @@ type Specifications struct {
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// write the index.html page
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("index.html"))
+	tmpl := template.Must(template.ParseFiles("templates/index.html"))
 
 	// get the response from api endpoint
 	resp, err := http.Get("http://localhost:3000/api/models")
@@ -63,7 +63,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func carHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("car.html"))
+	tmpl := template.Must(template.ParseFiles("templates/car.html"))
 
 	id := r.PathValue("id")
 
