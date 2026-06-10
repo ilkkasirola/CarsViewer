@@ -1,18 +1,22 @@
 <html>
     <head>
         <title>{{.Name}}</title>
-        <link rel="stylesheet" href="/static/car.css">
+        <link rel="stylesheet" href="/static/car.css" />
     </head>
     <body>
         <h1>{{.Name}}</h1>
-       
-            <img src="http://localhost:3000/api/images/{{.Image}}">
-       
+
+        <img src="http://localhost:3000/api/images/{{.Image}}" />
+
         <p>Year: {{.Year}}</p>
         <p>Engine: {{.Specs.Engine}}</p>
         <p>Horsepower: {{.Specs.Horsepower}}</p>
         <p>Transmission: {{.Specs.Transmission}}</p>
         <p>Drivetrain: {{.Specs.Drivetrain}}</p>
+        <p>
+            Manufacturer: {{if
+            .Manufacturer}}{{.Manufacturer.Name}}{{else}}Unknown{{end}}
+        </p>
         <a href="/">back</a>
     </body>
 </html>

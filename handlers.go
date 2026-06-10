@@ -27,6 +27,7 @@ type CarModel struct {
 	Year           int            `json:"year"`
 	Specs          Specifications `json:"specifications"`
 	Image          string         `json:"image"`
+	Manufacturer   *Manufacturer  `json:"manufacturer,omitempty"`
 }
 
 type Specifications struct {
@@ -79,6 +80,15 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, "data error decoding car", http.StatusInternalServerError)
 		return
+	}
+
+	manuResp, manuErr := http.Get(fmt.Sprintf("http://localhost:3000/api/manufacturers/%d", car.ManufacturerID))
+	if manuErr == nil {
+		defer manuResp.Body.Close()
+		var manu Manufacturer
+		if json.NewDecoder(manuResp.Body).Decode(&manu) == nil {
+			car.Manufacturer = &manu
+		}
 	}
 
 	tmpl.Execute(w, car)
