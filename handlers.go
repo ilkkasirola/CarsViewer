@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"html/template"
+	"log"
 	"net/http"
 )
 
@@ -28,6 +29,7 @@ type CarModel struct {
 	Specs          Specifications `json:"specifications"`
 	Image          string         `json:"image"`
 	Manufacturer   *Manufacturer  `json:"manufacturer,omitempty"`
+	Category       *Category      `json:"category,omitempty"`
 }
 
 type Specifications struct {
@@ -82,14 +84,35 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	manuResp, manuErr := http.Get(fmt.Sprintf("http://localhost:3000/api/manufacturers/%d", car.ManufacturerID))
-	if manuErr == nil {
-		defer manuResp.Body.Close()
-		var manu Manufacturer
-		if json.NewDecoder(manuResp.Body).Decode(&manu) == nil {
-			car.Manufacturer = &manu
+	catResp, catErr := http.Get(fmt.Sprintf("http://localhost:3000/api/categories/%d", car.CategoryID))
+	if catErr != nil {
+		log.Printf("category fetch failed for car %d: %v", car.ID, catErr)
+	} else {
+		defer catResp.Body.Close()
+
+		var category Category
+
+		if catDecodeErr := json.NewDecoder(catResp.Body).Decode(&category); catDecodeErr == nil {
+			car.Category = &category
+		} else {
+			log.Printf("category decode failed for car %d: %v", car.ID, catDecodeErr)
 		}
 	}
 
+	manuResp, manuErr := http.Get(fmt.Sprintf("http://localhost:3000/api/manufacturers/%d", car.ManufacturerID))
+	if manuErr != nil {
+		log.Printf("manufacturer fetch failed for car %d: %v", car.ID, manuErr)
+	} else {
+		defer manuResp.Body.Close()
+
+		var manufacturer Manufacturer
+
+		if manuDecodeErr := json.NewDecoder(manuResp.Body).Decode(&manufacturer); manuDecodeErr == nil {
+			car.Manufacturer = &manufacturer
+		} else {
+			log.Printf("manufacturer decode failed for car %d: %v", car.ID, manuDecodeErr)
+		}
+	}
 	tmpl.Execute(w, car)
+
 }
