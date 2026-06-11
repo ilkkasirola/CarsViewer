@@ -15,9 +15,19 @@ type Manufacturer struct {
 	FoundingYear int    `json:"foundingYear"`
 }
 
+type ManufacturerPage struct {
+	Manufacturer Manufacturer
+	Cars         []CarModel
+}
+
 type Category struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type CategoryPage struct {
+	Category Category
+	Cars     []CarModel
 }
 
 type CarModel struct {
@@ -115,4 +125,99 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	tmpl.Execute(w, car)
 
+}
+
+func categoryHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html")
+	tmpl := template.Must(template.ParseFiles("templates/category.html"))
+
+	id := r.PathValue("id")
+
+	resp, err := http.Get("http://localhost:3000/api/models")
+	if err != nil {
+		http.Error(w, "fetching models failed", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var cars []CarModel
+
+	err = json.NewDecoder(resp.Body).Decode(&cars)
+	if err != nil {
+		http.Error(w, "data error", http.StatusInternalServerError)
+		return
+	}
+
+	catResp, err := http.Get(fmt.Sprintf("http://localhost:3000/api/categories/%s", id))
+	if err != nil {
+		http.Error(w, "fetching category failed", http.StatusInternalServerError)
+		return
+	}
+	defer catResp.Body.Close()
+
+	var category Category
+
+	if err := json.NewDecoder(catResp.Body).Decode(&category); err != nil {
+		http.Error(w, "data error decoding category", http.StatusInternalServerError)
+		return
+	}
+
+	var filtered []CarModel
+
+	for _, c := range cars {
+		if c.CategoryID == category.ID {
+			filtered = append(filtered, c)
+		}
+	}
+
+	tmpl.Execute(w, CategoryPage{Category: category, Cars: filtered})
+
+}
+
+func manufacturerHandler(w http.ResponseWriter, r *http.Request) {
+
+	w.Header().Set("Content-Type", "text/html")
+	tmpl := template.Must(template.ParseFiles("templates/manufacturer.html"))
+
+	id := r.PathValue("id")
+
+	resp, err := http.Get("http://localhost:3000/api/models")
+	if err != nil {
+		http.Error(w, "fetching models failed", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var cars []CarModel
+
+	err = json.NewDecoder(resp.Body).Decode(&cars)
+	if err != nil {
+		http.Error(w, "data error", http.StatusInternalServerError)
+		return
+	}
+
+	manuResp, err := http.Get(fmt.Sprintf("http://localhost:3000/api/manufacturers/%s", id))
+	if err != nil {
+		http.Error(w, "fetching manufacturer failed", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var manufacturer Manufacturer
+
+	if err := json.NewDecoder(manuResp.Body).Decode(&manufacturer); err != nil {
+		http.Error(w, "data error decoding  manufacturer", http.StatusInternalServerError)
+		return
+	}
+
+	var filtered []CarModel
+
+	for _, c := range cars {
+		if c.ManufacturerID == manufacturer.ID {
+			filtered = append(filtered, c)
+		}
+	}
+
+	tmpl.Execute(w, ManufacturerPage{Manufacturer: manufacturer, Cars: filtered})
 }

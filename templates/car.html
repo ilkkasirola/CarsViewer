@@ -8,10 +8,10 @@
 
         <img src="http://localhost:3000/api/images/{{.Image}}" />
         <p> 
-            Category: {{if .Category}}{{.Category.Name}}{{else}}Unknown{{end}}
+            Category: {{if .Category}}<a href="/category/{{.Category.ID}}">{{.Category.Name}}</a>{{else}}Unknown{{end}}
         </p> 
         <p>
-            Manufacturer: {{if.Manufacturer}}{{.Manufacturer.Name}}{{else}}Unknown{{end}}
+            Manufacturer: {{if.Manufacturer}}<a href="/manufacturer/{{.Manufacturer.ID}}">{{.Manufacturer.Name}}</a>{{else}}Unknown{{end}}
         </p>
       
         <p>Year: {{.Year}}</p>
