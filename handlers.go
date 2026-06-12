@@ -6,53 +6,31 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"strconv"
 )
 
-type Manufacturer struct {
-	ID           int    `json:"id"`
-	Name         string `json:"name"`
-	Country      string `json:"country"`
-	FoundingYear int    `json:"foundingYear"`
-}
-
-type ManufacturerPage struct {
-	Manufacturer Manufacturer
-	Cars         []CarModel
-}
-
-type Category struct {
-	ID   int    `json:"id"`
-	Name string `json:"name"`
-}
-
-type CategoryPage struct {
-	Category Category
-	Cars     []CarModel
-}
-
-type CarModel struct {
-	ID             int            `json:"id"`
-	Name           string         `json:"name"`
-	ManufacturerID int            `json:"manufacturerId"`
-	CategoryID     int            `json:"categoryId"`
-	Year           int            `json:"year"`
-	Specs          Specifications `json:"specifications"`
-	Image          string         `json:"image"`
-	Manufacturer   *Manufacturer  `json:"manufacturer,omitempty"`
-	Category       *Category      `json:"category,omitempty"`
-}
-
-type Specifications struct {
-	Engine       string `json:"engine"`
-	Horsepower   int    `json:"horsepower"`
-	Transmission string `json:"transmission"`
-	Drivetrain   string `json:"drivetrain"`
+func fetchNav() Nav {
+	// helper function fetching manufacturers and categories for navigation bar
+	var nav Nav
+	if manuResp, manuErr := http.Get("http://localhost:3000/api/manufacturers"); manuErr == nil {
+		defer manuResp.Body.Close()
+		json.NewDecoder(manuResp.Body).Decode(&nav.Manufacturers)
+	} else {
+		log.Printf("manufacturers fetch failed: %v", manuErr)
+	}
+	if catResp, catErr := http.Get("http://localhost:3000/api/categories"); catErr == nil {
+		defer catResp.Body.Close()
+		json.NewDecoder(catResp.Body).Decode(&nav.Categories)
+	} else {
+		log.Printf("categories fetch failed %v", catErr)
+	}
+	return nav
 }
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// write the index.html page
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("templates/index.html"))
+	tmpl := template.Must(template.ParseFiles("templates/index.html", "templates/topnav.html"))
 
 	// get the response from api endpoint
 	resp, err := http.Get("http://localhost:3000/api/models")
@@ -69,14 +47,13 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "data error", http.StatusInternalServerError)
 		return
 	}
-
-	tmpl.Execute(w, cars)
+	tmpl.Execute(w, HomePage{Nav: fetchNav(), Cars: cars})
 }
 
 func carHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("templates/car.html"))
+	tmpl := template.Must(template.ParseFiles("templates/car.html", "templates/topnav.html"))
 
 	id := r.PathValue("id")
 
@@ -94,43 +71,30 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	catResp, catErr := http.Get(fmt.Sprintf("http://localhost:3000/api/categories/%d", car.CategoryID))
-	if catErr != nil {
-		log.Printf("category fetch failed for car %d: %v", car.ID, catErr)
-	} else {
-		defer catResp.Body.Close()
-
-		var category Category
-
-		if catDecodeErr := json.NewDecoder(catResp.Body).Decode(&category); catDecodeErr == nil {
-			car.Category = &category
-		} else {
-			log.Printf("category decode failed for car %d: %v", car.ID, catDecodeErr)
+	nav := fetchNav()
+	//using nav to get categories and manufacturers reducing api calls
+	for _, c := range nav.Categories {
+		if c.ID == car.CategoryID {
+			car.Category = &c
+			break
 		}
 	}
 
-	manuResp, manuErr := http.Get(fmt.Sprintf("http://localhost:3000/api/manufacturers/%d", car.ManufacturerID))
-	if manuErr != nil {
-		log.Printf("manufacturer fetch failed for car %d: %v", car.ID, manuErr)
-	} else {
-		defer manuResp.Body.Close()
-
-		var manufacturer Manufacturer
-
-		if manuDecodeErr := json.NewDecoder(manuResp.Body).Decode(&manufacturer); manuDecodeErr == nil {
-			car.Manufacturer = &manufacturer
-		} else {
-			log.Printf("manufacturer decode failed for car %d: %v", car.ID, manuDecodeErr)
+	for _, m := range nav.Manufacturers {
+		if m.ID == car.ManufacturerID {
+			car.Manufacturer = &m
+			break
 		}
 	}
-	tmpl.Execute(w, car)
+
+	tmpl.Execute(w, CarPage{Nav: nav, Car: car})
 
 }
 
 func categoryHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("templates/category.html"))
+	tmpl := template.Must(template.ParseFiles("templates/category.html", "templates/topnav.html"))
 
 	id := r.PathValue("id")
 
@@ -149,18 +113,21 @@ func categoryHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	catResp, err := http.Get(fmt.Sprintf("http://localhost:3000/api/categories/%s", id))
+	nav := fetchNav()
+
+	categoryID, err := strconv.Atoi(id)
 	if err != nil {
-		http.Error(w, "fetching category failed", http.StatusInternalServerError)
+		http.Error(w, "error converting category id", http.StatusBadRequest)
 		return
 	}
-	defer catResp.Body.Close()
 
 	var category Category
 
-	if err := json.NewDecoder(catResp.Body).Decode(&category); err != nil {
-		http.Error(w, "data error decoding category", http.StatusInternalServerError)
-		return
+	for _, c := range nav.Categories {
+		if c.ID == categoryID {
+			category = c
+			break
+		}
 	}
 
 	var filtered []CarModel
@@ -171,14 +138,14 @@ func categoryHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tmpl.Execute(w, CategoryPage{Category: category, Cars: filtered})
+	tmpl.Execute(w, CategoryPage{Nav: nav, Category: category, Cars: filtered})
 
 }
 
 func manufacturerHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("templates/manufacturer.html"))
+	tmpl := template.Must(template.ParseFiles("templates/manufacturer.html", "templates/topnav.html"))
 
 	id := r.PathValue("id")
 
@@ -197,18 +164,21 @@ func manufacturerHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	manuResp, err := http.Get(fmt.Sprintf("http://localhost:3000/api/manufacturers/%s", id))
+	nav := fetchNav()
+
+	manufacturerID, err := strconv.Atoi(id)
 	if err != nil {
-		http.Error(w, "fetching manufacturer failed", http.StatusInternalServerError)
+		http.Error(w, "error converting manufacturer id", http.StatusBadRequest)
 		return
 	}
-	defer resp.Body.Close()
 
 	var manufacturer Manufacturer
 
-	if err := json.NewDecoder(manuResp.Body).Decode(&manufacturer); err != nil {
-		http.Error(w, "data error decoding  manufacturer", http.StatusInternalServerError)
-		return
+	for _, m := range nav.Manufacturers {
+		if m.ID == manufacturerID {
+			manufacturer = m
+			break
+		}
 	}
 
 	var filtered []CarModel
@@ -219,5 +189,5 @@ func manufacturerHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tmpl.Execute(w, ManufacturerPage{Manufacturer: manufacturer, Cars: filtered})
+	tmpl.Execute(w, ManufacturerPage{Nav: nav, Manufacturer: manufacturer, Cars: filtered})
 }

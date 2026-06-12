@@ -5,6 +5,7 @@
         <link rel="stylesheet" href="/static/index.css">
     </head>
     <body>
+        {{template "topnav" .}}
         <h1>{{.Manufacturer.Name}}</h1>  
         <div class="grid">
         {{range .Cars}}
@@ -17,6 +18,5 @@
        
         {{end}}
         </div>
-        <a href="/">back to main page</a>
     </body>
 </html>  

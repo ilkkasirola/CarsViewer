@@ -1,0 +1,21 @@
+{{define "topnav"}}
+<div class="topnav">
+    <a class="active" href="/">Home</a>
+    <div class="dropdown">
+        <button class="dropbtn">Manufacturer</button>
+        <div class="dropdown-content">
+            {{range .Manufacturers}}
+            <a href="/manufacturer/{{.ID}}">{{.Name}}</a>
+            {{end}}
+        </div>
+    </div>
+    <div class="dropdown">
+        <button class="dropbtn">Category</button>
+        <div class="dropdown-content">
+            {{range .Categories}}
+            <a href="/category/{{.ID}}">{{.Name}}</a>
+            {{end}}
+        </div>
+    </div>
+</div>
+{{end}}

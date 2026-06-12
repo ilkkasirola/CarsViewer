@@ -1,0 +1,27 @@
+.topnav {
+    display: flex;
+    gap: 10px;
+}
+
+.dropdown {
+    position: relative;
+}
+
+.dropbtn {
+    font: inherit;
+    cursor: pointer;
+}
+
+.dropdown-content {
+    display: none;
+    position: absolute;
+    background-color: white;
+}
+
+.dropdown-content a {
+    display: block;
+}
+
+.dropdown:hover .dropdown-content {
+    display: block;
+}
