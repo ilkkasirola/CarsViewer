@@ -1,34 +1,48 @@
 package main
 
 import (
-	"fmt"
-	"math/rand"
 	"net/http"
 	"strconv"
-	"time"
+	"strings"
 )
 
-const cookieName = "visitorID"
+func recommendHandler(w http.ResponseWriter, r *http.Request) {
+	currentItem := r.URL.Query().Get("id")
+	if currentItem == "" {
+		currentItem = "home"
+	}
+	var viewHistoryIDs []int
+	cookie, err := r.Cookie("view_history")
+	if err == nil && cookie.Value != "" {
+		parts := strings.Split(cookie.Value, ",")
+		for _, p := range parts {
+			if p == "" {
+				continue
+			}
+			id, err := strconv.Atoi(p)
+			if err == nil {
+				viewHistoryIDs = append(viewHistoryIDs, id)
+			}
+		}
+	}
+	if len(viewHistoryIDs) == 0 || strconv.Itoa(viewHistoryIDs[len(viewHistoryIDs)-1]) != currentItem {
+		if id, err := strconv.Atoi(currentItem); err == nil {
+			viewHistoryIDs = append(viewHistoryIDs, id)
+		}
+		if len(viewHistoryIDs) > 10 {
+			viewHistoryIDs = viewHistoryIDs[len(viewHistoryIDs)-10:]
+		}
+	}
+	newValueParts := make([]string, 0, len(viewHistoryIDs))
+	for _, id := range viewHistoryIDs {
+		newValueParts = append(newValueParts, strconv.Itoa(id))
+	}
+	newValue := strings.Join(newValueParts, ",")
 
-func newVisitorID() string {
-	return strconv.FormatInt(time.Now().UnixNano(), 36) + "-" + strconv.Itoa(rand.Intn(1000000))
-}
-func getOrSetVisitorCookie(w http.ResponseWriter, r *http.Request) string {
-	c, err := r.Cookie(cookieName)
-	if err == nil && c.Value != "" {
-		return c.Value
-	}
-	id := newVisitorID()
-	cookie := &http.Cookie{
-		Name:     cookieName,
-		Value:    id,
-		MaxAge:   3600,
+	http.SetCookie(w, &http.Cookie{
+		Name:     "view_history",
+		Value:    newValue,
 		Path:     "/",
-		HttpOnly: true,
-		SameSite: http.SameSiteLaxMode,
-		Expires:  time.Now().Add(365 * 24 * time.Hour),
-		// Secure:   true,
-	}
-	http.SetCookie(w, &cookie)
-	return id
+		SameSite: http.SameSiteStrictMode,
+	})
 }
