@@ -1,48 +1,96 @@
 package main
 
 import (
+	"encoding/json"
 	"net/http"
+	"os"
 	"strconv"
 	"strings"
 )
 
-func recommendHandler(w http.ResponseWriter, r *http.Request) {
-	currentItem := r.URL.Query().Get("id")
-	if currentItem == "" {
-		currentItem = "home"
+func loadAllCars() ([]CarModel, error) {
+	file, err := os.ReadFile("data/cars.json")
+	if err != nil {
+		return nil, err
 	}
-	var viewHistoryIDs []int
-	cookie, err := r.Cookie("view_history")
-	if err == nil && cookie.Value != "" {
-		parts := strings.Split(cookie.Value, ",")
-		for _, p := range parts {
-			if p == "" {
+	var cars []CarModel
+	if err := json.Unmarshal(file, &cars); err != nil {
+		return nil, err
+	}
+	return cars, nil
+
+}
+
+func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, limit int) ([]CarModel, error) {
+
+	var viewed []int
+	if car, err := r.Cookie("view_history"); err == nil && car.Value != "" {
+		for _, s := range strings.Split(car.Value, ",") {
+			if s == "" {
 				continue
 			}
-			id, err := strconv.Atoi(p)
-			if err == nil {
-				viewHistoryIDs = append(viewHistoryIDs, id)
+			if id, err := strconv.Atoi(s); err == nil {
+				viewed = append(viewed, id)
 			}
 		}
 	}
-	if len(viewHistoryIDs) == 0 || strconv.Itoa(viewHistoryIDs[len(viewHistoryIDs)-1]) != currentItem {
-		if id, err := strconv.Atoi(currentItem); err == nil {
-			viewHistoryIDs = append(viewHistoryIDs, id)
-		}
-		if len(viewHistoryIDs) > 10 {
-			viewHistoryIDs = viewHistoryIDs[len(viewHistoryIDs)-10:]
-		}
-	}
-	newValueParts := make([]string, 0, len(viewHistoryIDs))
-	for _, id := range viewHistoryIDs {
-		newValueParts = append(newValueParts, strconv.Itoa(id))
-	}
-	newValue := strings.Join(newValueParts, ",")
 
+	if currentID != 0 {
+		if len(viewed) == 0 || viewed[len(viewed)-1] != currentID {
+			viewed = append(viewed, currentID)
+			if len(viewed) > 10 {
+				viewed = viewed[len(viewed)-10:]
+			}
+		}
+	}
+
+	var parts []string
+	for _, id := range viewed {
+		parts = append(parts, strconv.Itoa(id))
+	}
+
+	newValue := strings.Join(parts, ",")
 	http.SetCookie(w, &http.Cookie{
-		Name:     "view_history",
-		Value:    newValue,
-		Path:     "/",
-		SameSite: http.SameSiteStrictMode,
+		Name:  "view_history",
+		Value: newValue,
+		Path:  "/",
 	})
+	if len(viewed) == 0 || (len(viewed == 1 && viewed[0] == currentID)) {
+		return nil, nil
+	}
+	allCars, err := loadAllCars()
+	if err != nil {
+		return nil, err
+	}
+	byID := map[int]CarModel{}
+	for _, car := range allCars {
+		byID[car.ID] = car
+	}
+
+	var recentViewed []CarModel
+	for i := len(viewed) - 1; i >= 0 && len(recentViewed) < limit; i-- {
+		id := viewed[i]
+		if id == currentId {
+			continue
+		}
+		if car, ok := byID[id]; ok {
+			already := false
+			for _, recentCar := range recentViewed {
+				if recentCar.ID == car.ID {
+					already = true
+					break
+				}
+			}
+			if !already {
+				recentViewed = append(recentViewed, car)
+			}
+		}
+	}
+
+	// if len(recentViewed) < limit {
+	// 	for _, c := range allCars {
+	// 		if len(recentViewed) >= limit
+	// 	}
+	// }
+	return recentViewed, nil
 }
