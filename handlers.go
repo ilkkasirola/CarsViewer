@@ -98,8 +98,12 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
-
-	tmpl.Execute(w, CarPage{Nav: nav, Car: car})
+	// using referer for "back" button to keep filters when going back to the home page
+	referer := r.Referer()
+	if referer == "" {
+		referer = "/"
+	}
+	tmpl.Execute(w, CarPage{Nav: nav, Car: car, BackURL: referer})
 
 }
 
@@ -121,6 +125,7 @@ func fetchNav() Nav {
 	return nav
 }
 
+// convert ids to ints
 func parseIDs(values []string) ([]int, error) {
 	ids := []int{}
 	for _, v := range values {
@@ -133,6 +138,7 @@ func parseIDs(values []string) ([]int, error) {
 	return ids, nil
 }
 
+// check filters to render for checkboxes
 func (n Nav) IsManufacturerSelected(id int) bool {
 	return slices.Contains(n.SelectedManufacturers, id)
 }

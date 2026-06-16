@@ -5,8 +5,10 @@
         <link rel="stylesheet" href="/static/car.css" />
     </head>
     <body>
-        {{template "topnav" .}}
-        <h1>{{.Car.Name}}</h1>
+        <h1>cars-viewer</h1>
+      
+         <h2>{{.Car.Name}}</h2>
+     
 
         
 
@@ -23,6 +25,7 @@
         <p>Horsepower: {{.Car.Specs.Horsepower}}</p>
         <p>Transmission: {{.Car.Specs.Transmission}}</p>
         <p>Drivetrain: {{.Car.Specs.Drivetrain}}</p>
+          <a class="btn" href="{{.BackURL}}">Back</a>
     
     </body>
 </html>

@@ -7,7 +7,8 @@ type HomePage struct {
 
 type CarPage struct {
 	Nav
-	Car CarModel
+	Car     CarModel
+	BackURL string
 }
 
 type Manufacturer struct {
