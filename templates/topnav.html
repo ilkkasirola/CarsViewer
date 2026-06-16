@@ -1,21 +1,31 @@
 {{define "topnav"}}
 <div class="topnav">
-    <a class="active" href="/">Home</a>
-    <div class="dropdown">
-        <button class="dropbtn">Manufacturer</button>
-        <div class="dropdown-content">
-            {{range .Manufacturers}}
-            <a href="/manufacturer/{{.ID}}">{{.Name}}</a>
-            {{end}}
+    <a class="homebtn" href="/">Home</a>
+    <form method="get" action="/">
+        <div class="dropdown">
+            <button class="dropbtn" type="button">Manufacturer</button>
+            <div class="dropdown-content">
+                {{range .Manufacturers}}
+                <label>
+                    <input type="checkbox" name="manufacturer" value="{{.ID}}"
+                     {{if $.IsManufacturerSelected .ID}}checked{{end}} onchange="this.form.submit()">
+                    {{.Name}}
+                </label>
+                {{end}}
+            </div>
         </div>
-    </div>
-    <div class="dropdown">
-        <button class="dropbtn">Category</button>
-        <div class="dropdown-content">
-            {{range .Categories}}
-            <a href="/category/{{.ID}}">{{.Name}}</a>
-            {{end}}
+        <div class="dropdown">
+            <button class="dropbtn" type="button">Category</button>
+            <div class="dropdown-content">
+                {{range .Categories}}
+                <label>
+                    <input type="checkbox" name="category" value="{{.ID}}"
+                     {{if $.IsCategorySelected .ID}}checked{{end}} onchange="this.form.submit()">
+                    {{.Name}}
+                </label>
+                {{end}}
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 {{end}}

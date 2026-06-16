@@ -3,23 +3,36 @@
     gap: 10px;
 }
 
+.topnav form {
+    display: flex;
+    gap: 10px
+}
+
 .dropdown {
     position: relative;
+}
+
+.homebtn {
+    font-size: 20px;
 }
 
 .dropbtn {
     font: inherit;
     cursor: pointer;
+    align-self: center;
+    font-size: 20px;
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
     background-color: white;
+    padding: 25px 20px 20px 25px;
 }
 
 .dropdown-content a {
     display: block;
+
 }
 
 .dropdown:hover .dropdown-content {
