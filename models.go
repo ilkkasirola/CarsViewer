@@ -10,18 +10,6 @@ type CarPage struct {
 	Car CarModel
 }
 
-type CategoryPage struct {
-	Nav
-	Category Category
-	Cars     []CarModel
-}
-
-type ManufacturerPage struct {
-	Nav
-	Manufacturer Manufacturer
-	Cars         []CarModel
-}
-
 type Manufacturer struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`
@@ -54,6 +42,8 @@ type Specifications struct {
 }
 
 type Nav struct {
-	Manufacturers []Manufacturer
-	Categories    []Category
+	Manufacturers         []Manufacturer
+	Categories            []Category
+	SelectedManufacturers []int
+	SelectedCategories    []int
 }
