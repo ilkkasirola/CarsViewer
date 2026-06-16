@@ -21,7 +21,7 @@ func loadAllCars() ([]CarModel, error) {
 
 }
 
-func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, limit int) ([]CarModel, error) {
+func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, maxN int) ([]CarModel, error) {
 
 	var viewed []int
 	if car, err := r.Cookie("view_history"); err == nil && car.Value != "" {
@@ -55,7 +55,7 @@ func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, li
 		Value: newValue,
 		Path:  "/",
 	})
-	if len(viewed) == 0 || (len(viewed == 1 && viewed[0] == currentID)) {
+	if len(viewed) == 0 || (len(viewed) == 1 && viewed[0] == currentID) {
 		return nil, nil
 	}
 	allCars, err := loadAllCars()
@@ -68,20 +68,20 @@ func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, li
 	}
 
 	var recentViewed []CarModel
-	for i := len(viewed) - 1; i >= 0 && len(recentViewed) < limit; i-- {
+	for i := len(viewed) - 1; i >= 0 && len(recentViewed) < maxN; i-- {
 		id := viewed[i]
-		if id == currentId {
+		if id == currentID {
 			continue
 		}
 		if car, ok := byID[id]; ok {
-			already := false
+			dupe := false
 			for _, recentCar := range recentViewed {
 				if recentCar.ID == car.ID {
-					already = true
+					dupe = true
 					break
 				}
 			}
-			if !already {
+			if !dupe {
 				recentViewed = append(recentViewed, car)
 			}
 		}

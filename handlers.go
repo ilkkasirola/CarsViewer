@@ -99,8 +99,21 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	tmpl.Execute(w, CarPage{Nav: nav, Car: car})
+	recents, err := getRecentlyViewed(w, r, car.ID, 5)
+	if err != nil {
+		http.Error(w, "cannot get recently viewed", http.StatusInternalServerError)
+		return
+	}
 
+	data := struct {
+		Nav     Nav
+		Car     CarModel
+		Recents []CarModel
+	}{Nav: nav, Car: car, Recents: recents}
+
+	if err := tmpl.Execute(w, data); err != nil {
+		log.Printf("template exxecute error: %v", err)
+	}
 }
 
 func fetchNav() Nav {

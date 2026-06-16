@@ -1,22 +1,22 @@
 <html>
     <head>
         <title>cars-viewer</title>
-        <link rel="stylesheet" href="/static/base.css">
-        <link rel="stylesheet" href="/static/index.css">
+        <link rel="stylesheet" href="/static/base.css" />
+        <link rel="stylesheet" href="/static/index.css" />
     </head>
     <body>
         {{template "topnav" .}}
-        <h1>cars-viewer</h1>  
+        <h1>cars-viewer</h1>
         <div class="grid">
-        {{range .Cars}}
-        <div>
-            <a href="/car/{{.ID}}">
-                <img src="http://localhost:3000/api/images/{{.Image}}">
-             </a>
-             <p>{{.Name}}</p>
-        </div>
-       
-        {{end}}
+            {{range .Cars}}
+            <div>
+                <a href="/car/{{.ID}}">
+                    <img src="http://localhost:3000/api/images/{{.Image}}" />
+                </a>
+                <p>{{.Name}}</p>
+            </div>
+
+            {{end}}
         </div>
     </body>
-</html>  
+</html>

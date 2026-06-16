@@ -8,21 +8,25 @@
         {{template "topnav" .}}
         <h1>{{.Car.Name}}</h1>
 
-        
-
         <img src="http://localhost:3000/api/images/{{.Car.Image}}" />
-        <p> 
-            Category: {{if .Car.Category}}<a href="/category/{{.Car.Category.ID}}">{{.Car.Category.Name}}</a>{{else}}Unknown{{end}}
-        </p> 
         <p>
-            Manufacturer: {{if .Car.Manufacturer}}<a href="/manufacturer/{{.Car.Manufacturer.ID}}">{{.Car.Manufacturer.Name}}</a>{{else}}Unknown{{end}}
+            Category: {{if .Car.Category}}<a
+                href="/category/{{.Car.Category.ID}}"
+                >{{.Car.Category.Name}}</a
+            >{{else}}Unknown{{end}}
         </p>
-      
+        <p>
+            Manufacturer: {{if .Car.Manufacturer}}<a
+                href="/manufacturer/{{.Car.Manufacturer.ID}}"
+                >{{.Car.Manufacturer.Name}}</a
+            >{{else}}Unknown{{end}}
+        </p>
+
         <p>Year: {{.Car.Year}}</p>
         <p>Engine: {{.Car.Specs.Engine}}</p>
         <p>Horsepower: {{.Car.Specs.Horsepower}}</p>
         <p>Transmission: {{.Car.Specs.Transmission}}</p>
         <p>Drivetrain: {{.Car.Specs.Drivetrain}}</p>
-    
+        <br />
     </body>
 </html>
