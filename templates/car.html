@@ -10,20 +10,22 @@
          <h2>{{.Car.Name}}</h2>
      
 
-        
+         <p> Manufacturer: {{if .Car.Manufacturer}} {{.Car.Manufacturer.Name}} {{else}}Unknown{{end}}</p>
+           <p> Founding year: {{if .Car.Manufacturer}} {{.Car.Manufacturer.FoundingYear}} {{else}}Unknown{{end}}</p>
+        <p> Country :{{if .Car.Manufacturer}} {{.Car.Manufacturer.Country}} {{else}}Unknown{{end}}</p>
+      
 
         <img src="http://localhost:3000/api/images/{{.Car.Image}}" />
         <p> 
-            Category: {{if .Car.Category}}<a href="/category/{{.Car.Category.ID}}">{{.Car.Category.Name}}</a>{{else}}Unknown{{end}}
+            Category: {{if .Car.Category}} {{.Car.Category.Name}} {{else}}Unknown{{end}}
         </p> 
-        <p>
-            Manufacturer: {{if .Car.Manufacturer}}<a href="/manufacturer/{{.Car.Manufacturer.ID}}">{{.Car.Manufacturer.Name}}</a>{{else}}Unknown{{end}}
-        </p>
+       
+  
       
         <p>Year: {{.Car.Year}}</p>
         <p>Engine: {{.Car.Specs.Engine}}</p>
         <p>Horsepower: {{.Car.Specs.Horsepower}}</p>
-        <p>Transmission: {{.Car.Specs.Transmission}}</p>
+        <p>Transmission: {{.Car.Specs.Transmission}}</p> 
         <p>Drivetrain: {{.Car.Specs.Drivetrain}}</p>
           <a class="btn" href="{{.BackURL}}">Back</a>
     
