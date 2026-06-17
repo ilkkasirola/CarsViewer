@@ -6,26 +6,58 @@
     </head>
     <body>
         <h1>cars-viewer</h1>
-      
-         <h2>{{.Car.Name}}</h2>
-     
 
-        
+        <h2>{{.Car.Name}}</h2>
+
+        <p>
+            Manufacturer: {{if .Car.Manufacturer}} {{.Car.Manufacturer.Name}}
+            {{else}}Unknown{{end}}
+        </p>
+        <p>
+            Founding year: {{if .Car.Manufacturer}}
+            {{.Car.Manufacturer.FoundingYear}} {{else}}Unknown{{end}}
+        </p>
+        <p>
+            Country :{{if .Car.Manufacturer}} {{.Car.Manufacturer.Country}}
+            {{else}}Unknown{{end}}
+        </p>
 
         <img src="http://localhost:3000/api/images/{{.Car.Image}}" />
-        <p> 
-            Category: {{if .Car.Category}}<a href="/category/{{.Car.Category.ID}}">{{.Car.Category.Name}}</a>{{else}}Unknown{{end}}
-        </p> 
         <p>
-            Manufacturer: {{if .Car.Manufacturer}}<a href="/manufacturer/{{.Car.Manufacturer.ID}}">{{.Car.Manufacturer.Name}}</a>{{else}}Unknown{{end}}
+            Category: {{if .Car.Category}} {{.Car.Category.Name}}
+            {{else}}Unknown{{end}}
         </p>
-      
+
         <p>Year: {{.Car.Year}}</p>
         <p>Engine: {{.Car.Specs.Engine}}</p>
         <p>Horsepower: {{.Car.Specs.Horsepower}}</p>
         <p>Transmission: {{.Car.Specs.Transmission}}</p>
         <p>Drivetrain: {{.Car.Specs.Drivetrain}}</p>
-          <a class="btn" href="{{.BackURL}}">Back</a>
-    
+        <a class="btn" href="{{.BackURL}}">Back</a>
+
+        <br />
+
+        {{/* Recently Viewed */}} {{if .RecentlyViewed}}
+        <hr />
+        <h2>Recently Viewed</h2>
+        <div class="recent-grid">
+            {{range .RecentlyViewed}}
+            <div class="recent-item">
+                <a href="/car/{{.ID}}">
+                    <img
+                        src="http://localhost:3000/api/images/{{.Image}}"
+                        alt="{{.Name}}"
+                    />
+                    <div class="recent-name">{{.Name}}</div>
+                </a>
+                <div class="recent-meta">
+                    <span>{{.Year}}</span>
+                    {{if .Manufacturer}} •
+                    <span>{{.Manufacturer.Name}}</span>{{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{end}}
     </body>
 </html>
