@@ -2,24 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
-	"os"
 	"strconv"
 	"strings"
 )
-
-func loadAllCars() ([]CarModel, error) {
-	file, err := os.ReadFile("data/cars.json")
-	if err != nil {
-		return nil, err
-	}
-	var cars []CarModel
-	if err := json.Unmarshal(file, &cars); err != nil {
-		return nil, err
-	}
-	return cars, nil
-
-}
 
 func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, maxN int) ([]CarModel, error) {
 
@@ -58,10 +45,20 @@ func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, ma
 	if len(viewed) == 0 || (len(viewed) == 1 && viewed[0] == currentID) {
 		return nil, nil
 	}
-	allCars, err := loadAllCars()
+
+	resp, err := http.Get("http://localhost:3000/api/models")
 	if err != nil {
-		return nil, err
+		log.Printf("failed to fetch models from API: %v", err)
+		return nil, nil
 	}
+	defer resp.Body.Close()
+
+	var allCars []CarModel
+	if err := json.NewDecoder(resp.Body).Decode(&allCars); err != nil {
+		log.Printf("failed to decode models JSON: %v", err)
+		return nil, nil
+	}
+
 	byID := map[int]CarModel{}
 	for _, car := range allCars {
 		byID[car.ID] = car

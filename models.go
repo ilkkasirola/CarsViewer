@@ -7,7 +7,9 @@ type HomePage struct {
 
 type CarPage struct {
 	Nav
-	Car CarModel
+	Car             CarModel
+	RecentlyViewed  []CarModel
+	Recommendations []CarModel
 }
 
 type Manufacturer struct {

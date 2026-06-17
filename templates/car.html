@@ -28,5 +28,28 @@
         <p>Transmission: {{.Car.Specs.Transmission}}</p>
         <p>Drivetrain: {{.Car.Specs.Drivetrain}}</p>
         <br />
+
+        {{/* Recently Viewed */}} {{if .RecentlyViewed}}
+        <hr />
+        <h2>Recently Viewed</h2>
+        <div class="recent-grid">
+            {{range .RecentlyViewed}}
+            <div class="recent-item">
+                <a href="/car/{{.ID}}">
+                    <img
+                        src="http://localhost:3000/api/images/{{.Image}}"
+                        alt="{{.Name}}"
+                    />
+                    <div class="recent-name">{{.Name}}</div>
+                </a>
+                <div class="recent-meta">
+                    <span>{{.Year}}</span>
+                    {{if .Manufacturer}} •
+                    <span>{{.Manufacturer.Name}}</span>{{end}}
+                </div>
+            </div>
+            {{end}}
+        </div>
+        {{end}}
     </body>
 </html>

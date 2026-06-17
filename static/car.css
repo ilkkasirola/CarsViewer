@@ -3,5 +3,30 @@ img {
     height: 300px;
 }
 p {
-   padding: 0px 20px 10px 20px; 
+    padding: 0px 20px 10px 20px;
+}
+
+.recent-grid {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 8px;
+}
+.recent-item {
+    width: 140px;
+    text-align: center;
+}
+.recent-item img {
+    width: 100%;
+    height: 90px;
+    object-fit: cover;
+    border-radius: 4px;
+}
+.recent-name {
+    font-size: 0.9rem;
+    margin-top: 6px;
+}
+.recent-meta {
+    font-size: 0.8rem;
+    color: #666;
 }
