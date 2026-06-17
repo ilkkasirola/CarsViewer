@@ -8,12 +8,20 @@ import (
 	"net/http"
 	"slices"
 	"strconv"
+	"strings"
 )
+
+var templates = template.Must(template.ParseFiles(
+	"templates/index.html",
+	"templates/car.html",
+	"templates/topnav.html",
+))
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// write the index.html page
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("templates/index.html", "templates/topnav.html"))
+
+	// err := template.Must(template.ParseFiles("templates/index.html", "templates/topnav.html"))
 
 	// get the response from api endpoint
 	resp, err := http.Get("http://localhost:3000/api/models")
@@ -58,17 +66,23 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		filtered = append(filtered, c)
 	}
 
-	tmpl.Execute(w, HomePage{Nav: nav, Cars: filtered})
+	err = templates.ExecuteTemplate(w, "index.html", HomePage{Nav: nav, Cars: filtered})
+	if err != nil {
+		log.Printf("templates execute  error: %v", err)
+	}
 
 }
 
 func carHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
-	tmpl := template.Must(template.ParseFiles("templates/car.html", "templates/topnav.html"))
+	// tmpl := template.Must(template.ParseFiles("templates/car.html", "templates/topnav.html"))
 
-	id := r.PathValue("id")
-
+	id := strings.TrimPrefix(r.URL.Path, "/car/")
+	if id == "" {
+		http.Error(w, "missing id", http.StatusBadRequest)
+		return
+	}
 	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/api/models/%s", id))
 	if err != nil {
 		http.Error(w, "fetching failed", http.StatusInternalServerError)
@@ -98,13 +112,29 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 	}
+
+	recents, err := getRecentlyViewed(w, r, car.ID, 5)
+	if err != nil {
+		log.Printf("getRecentlu error: %v", err)
+		http.Error(w, "cannot get recently viewed", http.StatusInternalServerError)
+		return
+	}
 	// using referer for "back" button to keep filters when going back to the home page
 	referer := r.Referer()
 	if referer == "" {
 		referer = "/"
 	}
-	tmpl.Execute(w, CarPage{Nav: nav, Car: car, BackURL: referer})
 
+	data := CarPage{
+		Nav:            nav,
+		Car:            car,
+		RecentlyViewed: recents,
+		BackURL:        referer,
+	}
+
+	if err := templates.ExecuteTemplate(w, "car.html", data); err != nil {
+		log.Printf("template exxecute error: %v", err)
+	}
 }
 
 func fetchNav() Nav {
