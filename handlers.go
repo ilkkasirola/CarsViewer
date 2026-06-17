@@ -1,8 +1,6 @@
 package main
 
 import (
-	"encoding/json"
-	"fmt"
 	"html/template"
 	"log"
 	"net/http"
@@ -18,24 +16,12 @@ var templates = template.Must(template.ParseFiles(
 ))
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
-	// write the index.html page
+
 	w.Header().Set("Content-Type", "text/html")
 
-	// err := template.Must(template.ParseFiles("templates/index.html", "templates/topnav.html"))
-
-	// get the response from api endpoint
-	resp, err := http.Get("http://localhost:3000/api/models")
+	nav, cars, err := fetchHomeData()
 	if err != nil {
 		http.Error(w, "fetching failed", http.StatusInternalServerError)
-		return
-	}
-	defer resp.Body.Close()
-
-	var cars []CarModel
-	err = json.NewDecoder(resp.Body).Decode(&cars)
-	// read the json data and convert it to our go struct
-	if err != nil {
-		http.Error(w, "data error", http.StatusInternalServerError)
 		return
 	}
 
@@ -51,7 +37,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	nav := fetchNav()
 	nav.SelectedCategories = categoryIDs
 	nav.SelectedManufacturers = manufacturerIDs
 
@@ -76,37 +61,27 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 func carHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
-	// tmpl := template.Must(template.ParseFiles("templates/car.html", "templates/topnav.html"))
 
 	id := strings.TrimPrefix(r.URL.Path, "/car/")
 	if id == "" {
 		http.Error(w, "missing id", http.StatusBadRequest)
 		return
 	}
-	resp, err := http.Get(fmt.Sprintf("http://localhost:3000/api/models/%s", id))
+
+	lookup, car, err := fetchCarData(id)
 	if err != nil {
 		http.Error(w, "fetching failed", http.StatusInternalServerError)
 		return
 	}
-	defer resp.Body.Close()
 
-	var car CarModel
-	err = json.NewDecoder(resp.Body).Decode(&car)
-	if err != nil {
-		http.Error(w, "data error decoding car", http.StatusInternalServerError)
-		return
-	}
-
-	nav := fetchNav()
-	//using nav to get categories and manufacturers reducing api calls
-	for _, c := range nav.Categories {
+	for _, c := range lookup.Categories {
 		if c.ID == car.CategoryID {
 			car.Category = &c
 			break
 		}
 	}
 
-	for _, m := range nav.Manufacturers {
+	for _, m := range lookup.Manufacturers {
 		if m.ID == car.ManufacturerID {
 			car.Manufacturer = &m
 			break
@@ -115,44 +90,26 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 
 	recents, err := getRecentlyViewed(w, r, car.ID, 5)
 	if err != nil {
-		log.Printf("getRecentlu error: %v", err)
+		log.Printf("getRecently error: %v", err)
 		http.Error(w, "cannot get recently viewed", http.StatusInternalServerError)
 		return
 	}
-	// using referer for "back" button to keep filters when going back to the home page
+
 	referer := r.Referer()
 	if referer == "" {
 		referer = "/"
 	}
 
 	data := CarPage{
-		Nav:            nav,
+		Lookup:         lookup,
 		Car:            car,
 		RecentlyViewed: recents,
 		BackURL:        referer,
 	}
 
 	if err := templates.ExecuteTemplate(w, "car.html", data); err != nil {
-		log.Printf("template exxecute error: %v", err)
+		log.Printf("template execute error: %v", err)
 	}
-}
-
-func fetchNav() Nav {
-	// helper function fetching manufacturers and categories for navigation bar
-	var nav Nav
-	if manuResp, manuErr := http.Get("http://localhost:3000/api/manufacturers"); manuErr == nil {
-		defer manuResp.Body.Close()
-		json.NewDecoder(manuResp.Body).Decode(&nav.Manufacturers)
-	} else {
-		log.Printf("manufacturers fetch failed: %v", manuErr)
-	}
-	if catResp, catErr := http.Get("http://localhost:3000/api/categories"); catErr == nil {
-		defer catResp.Body.Close()
-		json.NewDecoder(catResp.Body).Decode(&nav.Categories)
-	} else {
-		log.Printf("categories fetch failed %v", catErr)
-	}
-	return nav
 }
 
 // convert ids to ints

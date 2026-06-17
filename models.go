@@ -6,7 +6,7 @@ type HomePage struct {
 }
 
 type CarPage struct {
-	Nav
+	Lookup
 	RecentlyViewed  []CarModel
 	Recommendations []CarModel
 	Car             CarModel
@@ -49,4 +49,9 @@ type Nav struct {
 	Categories            []Category
 	SelectedManufacturers []int
 	SelectedCategories    []int
+}
+
+type Lookup struct {
+	Manufacturers []Manufacturer
+	Categories    []Category
 }
