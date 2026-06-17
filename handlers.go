@@ -119,11 +119,17 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "cannot get recently viewed", http.StatusInternalServerError)
 		return
 	}
+	// using referer for "back" button to keep filters when going back to the home page
+	referer := r.Referer()
+	if referer == "" {
+		referer = "/"
+	}
 
 	data := CarPage{
 		Nav:            nav,
 		Car:            car,
 		RecentlyViewed: recents,
+		BackURL:        referer,
 	}
 
 	if err := templates.ExecuteTemplate(w, "car.html", data); err != nil {
@@ -149,6 +155,7 @@ func fetchNav() Nav {
 	return nav
 }
 
+// convert ids to ints
 func parseIDs(values []string) ([]int, error) {
 	ids := []int{}
 	for _, v := range values {
@@ -161,6 +168,7 @@ func parseIDs(values []string) ([]int, error) {
 	return ids, nil
 }
 
+// check filters to render for checkboxes
 func (n Nav) IsManufacturerSelected(id int) bool {
 	return slices.Contains(n.SelectedManufacturers, id)
 }

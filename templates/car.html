@@ -5,8 +5,9 @@
         <link rel="stylesheet" href="/static/car.css" />
     </head>
     <body>
-        {{template "topnav" .}}
-        <h1>{{.Car.Name}}</h1>
+        <h1>cars-viewer</h1>
+
+        <h2>{{.Car.Name}}</h2>
 
         <img src="http://localhost:3000/api/images/{{.Car.Image}}" />
         <p>
