@@ -9,10 +9,11 @@ import (
 	"strings"
 )
 
-func saveFiltersCookie(w http.ResponseWriter, rawQuery string) {
+func saveFiltersCookie(w http.ResponseWriter, query string) {
 	http.SetCookie(w, &http.Cookie{
-		Name:  "filters",
-		Value: url.QueryEscape(rawQuery),
+		Name: "filters",
+		// had some problems with '=' character. have to use QueryEscape
+		Value: url.QueryEscape(query),
 		Path:  "/",
 	})
 }

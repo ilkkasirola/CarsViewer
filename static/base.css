@@ -60,10 +60,11 @@ h1 {
 
 .filter-actions {
     display: flex;
+ 
     gap: 15px;
-    margin-top: 15px;
-    padding-top: 10px;
-    border-top: 1px solid #ccc;
+    justify-content: right;
+    border-left: 1px solid #ccc;
+    padding-left: 30px;
 }
 
 
