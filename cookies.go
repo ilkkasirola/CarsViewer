@@ -4,9 +4,27 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+	"net/url"
 	"strconv"
 	"strings"
 )
+
+func saveFiltersCookie(w http.ResponseWriter, rawQuery string) {
+	http.SetCookie(w, &http.Cookie{
+		Name:  "filters",
+		Value: url.QueryEscape(rawQuery),
+		Path:  "/",
+	})
+}
+
+func getFilterBackURL(r *http.Request) string {
+	if c, err := r.Cookie("filters"); err == nil && c.Value != "" {
+		if q, err := url.QueryUnescape(c.Value); err == nil {
+			return "/?" + q
+		}
+	}
+	return "/"
+}
 
 func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, maxN int) ([]CarModel, error) {
 

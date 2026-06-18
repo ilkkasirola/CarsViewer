@@ -4,7 +4,6 @@ import (
 	"html/template"
 	"log"
 	"net/http"
-	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -40,6 +39,11 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	nav.SelectedCategories = categoryIDs
 	nav.SelectedManufacturers = manufacturerIDs
+
+	//save filters from main page
+	if r.URL.Path == "/" {
+		saveFiltersCookie(w, r.URL.RawQuery)
+	}
 
 	var filtered []CarModel
 	for _, c := range cars {
@@ -96,14 +100,7 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	backURL := "/"
-	if referer := r.Referer(); referer != "" {
-		if u, err := url.Parse(referer); err == nil && u.Path == "/" {
-			if q := u.RawQuery; q != "" {
-				backURL = "/?" + q
-			}
-		}
-	}
+	backURL := getFilterBackURL(r)
 
 	data := CarPage{
 		Lookup:         lookup,
@@ -117,7 +114,6 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// convert ids to ints
 func parseIDs(values []string) ([]int, error) {
 	ids := []int{}
 	for _, v := range values {
