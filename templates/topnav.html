@@ -6,7 +6,7 @@
             <div class="dropdown-content">
                 <div class="filter-columns">
                     <div class="filter-column">
-                        <h3>Manufacturer</h3>
+                        <h3>Manufacturers</h3>
                         {{range .Manufacturers}}
                         <label>
                             <input type="checkbox" name="manufacturer" value="{{.ID}}"
@@ -16,7 +16,7 @@
                         {{end}}
                     </div>
                     <div class="filter-column">
-                        <h3>Category</h3>
+                        <h3>Categories</h3>
                         {{range .Categories}}
                         <label>
                             <input type="checkbox" name="category" value="{{.ID}}"
@@ -25,7 +25,7 @@
                         </label>
                         {{end}}
                     </div>
-                    <div class="filter-actions">
+                    <div class="filter-column">
                         <button class="applybtn" type="submit">Apply</button>
                         <a class="clearbtn" href="/">Clear</a>
                     </div>

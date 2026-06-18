@@ -58,17 +58,27 @@ h1 {
     margin: 0 0 10px 0;
 }
 
-.filter-actions {
-    display: flex;
- 
-    gap: 15px;
-    justify-content: right;
-    border-left: 1px solid #ccc;
-    padding-left: 30px;
+.dropdown-content.show {
+    display: block;
+}
+
+.applybtn,
+.clearbtn {
+     background-color: grey;
+    width: 120px;
+    padding: 10px 0;
+    margin: 5px 10px;
+    box-sizing: border-box;
+    font-size: 20px;
+    cursor: pointer;
+    border: none;
+    display: inline-block;
+    text-align: center;
 }
 
 
 
-.dropdown-content.show {
-    display: block;
+.clearbtn {
+    color: white;
+    text-decoration: none;
 }
