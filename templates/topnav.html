@@ -2,30 +2,54 @@
 <div class="topnav">
     <form method="get" action="/">
         <div class="dropdown">
-            <button class="dropbtn" type="button">Manufacturer</button>
+            <button class="dropbtn" type="button" onclick="toggleDropdown(this)">Filters</button>
             <div class="dropdown-content">
-                {{range .Manufacturers}}
-                <label>
-                    <input type="checkbox" name="manufacturer" value="{{.ID}}"
-                     {{if $.IsManufacturerSelected .ID}}checked{{end}} onchange="this.form.submit()">
-                    {{.Name}}
-                </label>
-                {{end}}
-            </div>
-        </div>
-        <div class="dropdown">
-            <button class="dropbtn" type="button">Category</button>
-            <div class="dropdown-content">
-                {{range .Categories}}
-                <label>
-                    <input type="checkbox" name="category" value="{{.ID}}"
-                     {{if $.IsCategorySelected .ID}}checked{{end}} onchange="this.form.submit()">
-                    {{.Name}}
-                </label>
-                {{end}}
+                <div class="filter-columns">
+                    <div class="filter-column">
+                        <h3>Manufacturer</h3>
+                        {{range .Manufacturers}}
+                        <label>
+                            <input type="checkbox" name="manufacturer" value="{{.ID}}"
+                             {{if $.IsManufacturerSelected .ID}}checked{{end}}>
+                            {{.Name}}
+                        </label>
+                        {{end}}
+                    </div>
+                    <div class="filter-column">
+                        <h3>Category</h3>
+                        {{range .Categories}}
+                        <label>
+                            <input type="checkbox" name="category" value="{{.ID}}"
+                             {{if $.IsCategorySelected .ID}}checked{{end}}>
+                            {{.Name}}
+                        </label>
+                        {{end}}
+                    </div>
+                </div>
+                <div class="filter-actions">
+                    <button class="applybtn" type="submit">Apply</button>
+                    <a class="clearbtn" href="/">Clear</a>
+                </div>
             </div>
         </div>
     </form>
-      <a class="btn" href="/">clear filters</a>
 </div>
+<script>
+function toggleDropdown(btn) {
+    var content = btn.nextElementSibling;
+    content.classList.toggle("show");
+}
+
+window.onclick = function(event) {
+    if (!event.target.closest('.dropdown')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
+    }
+}
+</script>
 {{end}}
