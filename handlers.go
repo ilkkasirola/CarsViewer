@@ -4,6 +4,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"net/url"
 	"slices"
 	"strconv"
 	"strings"
@@ -95,16 +96,20 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	referer := r.Referer()
-	if referer == "" {
-		referer = "/"
+	backURL := "/"
+	if referer := r.Referer(); referer != "" {
+		if u, err := url.Parse(referer); err == nil && u.Path == "/" {
+			if q := u.RawQuery; q != "" {
+				backURL = "/?" + q
+			}
+		}
 	}
 
 	data := CarPage{
 		Lookup:         lookup,
 		Car:            car,
 		RecentlyViewed: recents,
-		BackURL:        referer,
+		BackURL:        backURL,
 	}
 
 	if err := templates.ExecuteTemplate(w, "car.html", data); err != nil {
