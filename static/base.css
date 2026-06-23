@@ -11,10 +11,9 @@ h1 {
     font-size: 25px;
 }
 
-
 .topnav form {
     display: flex;
-    gap: 30px
+    gap: 30px;
 }
 
 .dropdown {
@@ -64,7 +63,7 @@ h1 {
 
 .applybtn,
 .clearbtn {
-     background-color: grey;
+    background-color: grey;
     width: 120px;
     padding: 10px 0;
     margin: 5px 10px;
@@ -76,9 +75,14 @@ h1 {
     text-align: center;
 }
 
-
-
 .clearbtn {
     color: white;
     text-decoration: none;
+}
+
+@view-transition {
+    navigation: auto;
+}
+::view-transition-group(root) {
+    animation-duration: 1s;
 }

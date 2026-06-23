@@ -1,15 +1,16 @@
-
+body {
+    background-color: rebeccapurple;
+}
 img {
     width: 250px;
     height: 150px;
     border-radius: 10px;
-  border: 2px solid black;
-  
+    border: 2px solid black;
 }
 
 img:hover {
     cursor: pointer;
-   box-shadow: 0 0 15px 5px grey;
+    box-shadow: 0 0 15px 5px grey;
 }
 
 .grid {
@@ -19,5 +20,5 @@ img:hover {
 }
 
 p {
-   padding: 0px 40px 20px 40px; 
+    padding: 0px 40px 20px 40px;
 }
