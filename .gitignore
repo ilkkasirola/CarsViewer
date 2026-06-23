@@ -3,7 +3,6 @@
 # files, developer configurations or IDE-specific files etc.
 #
 # Recommended: Go.AllowList.gitignore
-/api/
 # Ignore everything
 *
 
@@ -22,3 +21,6 @@
 
 # ...even if they are in subdirectories
 !*/
+# BUT: Explicitly re-ignore /api/ and its contents
+/api/
+/api/**
