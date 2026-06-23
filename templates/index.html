@@ -9,13 +9,49 @@
         {{template "topnav" .}}
         <div class="grid">
             {{range .Cars}}
-            <div>
-                <a href="/car/{{.ID}}">
-                    <img src="http://localhost:3000/api/images/{{.Image}}" />
-                </a>
-                <p>{{.Name}}</p>
-            </div>
+            <button
+                class="car-card"
+                onclick="document.getElementById('modal-{{.ID}}').showModal()"
+            >
+                <div class="showroom-frame">
+                    <img
+                        src="http://localhost:3000/api/images/{{.Image}}"
+                        alt="{{.Name}}"
+                    />
+                </div>
+                <p class="car-name">{{.Name}}</p>
+            </button>
 
+            <!-- Modal for this car -->
+            <dialog id="modal-{{.ID}}" class="car-modal">
+                <div class="modal-content">
+                    <button
+                        class="close-btn"
+                        onclick="this.closest('dialog').close()"
+                    >
+                        &times;
+                    </button>
+                    <div class="modal-car-details">
+                        <img
+                            src="http://localhost:3000/api/images/{{.Image}}"
+                            alt="{{.Name}}"
+                            class="modal-car-image"
+                        />
+                        <h2>{{.Name}}</h2>
+                        <div class="modal-actions">
+                            <a href="/car/{{.ID}}" class="btn-view-details"
+                                >View Full Details</a
+                            >
+                            <button
+                                onclick="this.closest('dialog').close()"
+                                class="btn-close"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </dialog>
             {{end}}
         </div>
     </body>

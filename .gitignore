@@ -3,7 +3,7 @@
 # files, developer configurations or IDE-specific files etc.
 #
 # Recommended: Go.AllowList.gitignore
-
+/api/
 # Ignore everything
 *
 

@@ -5,59 +5,128 @@
         <link rel="stylesheet" href="/static/car.css" />
     </head>
     <body>
-        <h1>cars-viewer</h1>
-           <a class="btn" href="{{.BackURL}}">Back</a>
+        <div class="car-detail-header">
+            <a class="btn-back" href="{{.BackURL}}">← Back</a>
+            <h1 class="page-title">{{.Car.Name}}</h1>
+        </div>
 
-        <h2>{{.Car.Name}}</h2>
+        <div class="car-detail-container">
+            <!-- Hero Image Section -->
+            <div class="car-hero">
+                <img
+                    src="http://localhost:3000/api/images/{{.Car.Image}}"
+                    alt="{{.Car.Name}}"
+                    class="hero-image"
+                />
+            </div>
 
-        <p>
-            Manufacturer: {{if .Car.Manufacturer}} {{.Car.Manufacturer.Name}}
-            {{else}}Unknown{{end}}
-        </p>
-        <p>
-            Founding year: {{if .Car.Manufacturer}}
-            {{.Car.Manufacturer.FoundingYear}} {{else}}Unknown{{end}}
-        </p>
-        <p>
-            Country :{{if .Car.Manufacturer}} {{.Car.Manufacturer.Country}}
-            {{else}}Unknown{{end}}
-        </p>
+            <!-- Car Title & Manufacturer Info -->
+            <div class="car-header-info">
+                <div>
+                    <h2>{{.Car.Name}}</h2>
+                    <p class="subtitle">{{.Car.Year}} Model Year</p>
+                </div>
+                <div class="manufacturer-badge">
+                    {{if .Car.Manufacturer}}
+                    <div class="badge-item">
+                        <span class="badge-label">Manufacturer</span>
+                        <span class="badge-value"
+                            >{{.Car.Manufacturer.Name}}</span
+                        >
+                    </div>
+                    <div class="badge-item">
+                        <span class="badge-label">Country</span>
+                        <span class="badge-value"
+                            >{{.Car.Manufacturer.Country}}</span
+                        >
+                    </div>
+                    <div class="badge-item">
+                        <span class="badge-label">Founded</span>
+                        <span class="badge-value"
+                            >{{.Car.Manufacturer.FoundingYear}}</span
+                        >
+                    </div>
+                    {{end}}
+                </div>
+            </div>
 
-        <img src="http://localhost:3000/api/images/{{.Car.Image}}" />
-        <p>
-            Category: {{if .Car.Category}} {{.Car.Category.Name}}
-            {{else}}Unknown{{end}}
-        </p>
+            <!-- Spec Sheet -->
+            <div class="spec-sheet">
+                <h3 class="spec-title">Vehicle Specifications</h3>
+                <div class="spec-grid">
+                    <!-- Row 1 -->
+                    <div class="spec-item">
+                        <span class="spec-label">Category</span>
+                        <span class="spec-value"
+                            >{{if
+                            .Car.Category}}{{.Car.Category.Name}}{{else}}Unknown{{end}}</span
+                        >
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Year</span>
+                        <span class="spec-value">{{.Car.Year}}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Engine</span>
+                        <span class="spec-value">{{.Car.Specs.Engine}}</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Horsepower</span>
+                        <span class="spec-value"
+                            >{{.Car.Specs.Horsepower}} HP</span
+                        >
+                    </div>
 
-        <p>Year: {{.Car.Year}}</p>
-        <p>Engine: {{.Car.Specs.Engine}}</p>
-        <p>Horsepower: {{.Car.Specs.Horsepower}}</p>
-        <p>Transmission: {{.Car.Specs.Transmission}}</p> 
-        <p>Drivetrain: {{.Car.Specs.Drivetrain}}</p>
+                    <!-- Row 2 -->
+                    <div class="spec-item">
+                        <span class="spec-label">Transmission</span>
+                        <span class="spec-value"
+                            >{{.Car.Specs.Transmission}}</span
+                        >
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Drivetrain</span>
+                        <span class="spec-value"
+                            >{{.Car.Specs.Drivetrain}}</span
+                        >
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Status</span>
+                        <span class="spec-value badge-active">Available</span>
+                    </div>
+                    <div class="spec-item">
+                        <span class="spec-label">Rating</span>
+                        <span class="spec-value rating">★★★★★</span>
+                    </div>
+                </div>
+            </div>
 
-        <br />
-
-        {{/* Recently Viewed */}} {{if .RecentlyViewed}}
-        <hr />
-        <h2>Recently Viewed</h2>
-        <div class="recent-grid">
-            {{range .RecentlyViewed}}
-            <div class="recent-item">
-                <a href="/car/{{.ID}}">
-                    <img
-                        src="http://localhost:3000/api/images/{{.Image}}"
-                        alt="{{.Name}}"
-                    />
-                    <div class="recent-name">{{.Name}}</div>
-                </a>
-                <div class="recent-meta">
-                    <span>{{.Year}}</span>
-                    {{if .Manufacturer}} •
-                    <span>{{.Manufacturer.Name}}</span>{{end}}
+            <!-- Recently Viewed Section -->
+            {{if .RecentlyViewed}}
+            <div class="recently-viewed-section">
+                <h3 class="section-title">Recently Viewed</h3>
+                <div class="recent-grid">
+                    {{range .RecentlyViewed}}
+                    <a href="/car/{{.ID}}" class="recent-card">
+                        <div class="recent-image">
+                            <img
+                                src="http://localhost:3000/api/images/{{.Image}}"
+                                alt="{{.Name}}"
+                            />
+                        </div>
+                        <div class="recent-info">
+                            <h4>{{.Name}}</h4>
+                            <p class="recent-meta">
+                                <span>{{.Year}}</span>
+                                {{if .Manufacturer}} •
+                                <span>{{.Manufacturer.Name}}</span>{{end}}
+                            </p>
+                        </div>
+                    </a>
+                    {{end}}
                 </div>
             </div>
             {{end}}
         </div>
-        {{end}}
     </body>
 </html>

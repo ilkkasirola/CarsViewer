@@ -102,11 +102,5 @@ func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, ma
 			}
 		}
 	}
-
-	// if len(recentViewed) < limit {
-	// 	for _, c := range allCars {
-	// 		if len(recentViewed) >= limit
-	// 	}
-	// }
 	return recentViewed, nil
 }
