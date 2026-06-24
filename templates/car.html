@@ -122,6 +122,32 @@
                 </div>
             </div>
             {{end}}
+            <!-- Recommendations Section -->
+            {{if .Recommendations}}
+            <div class="recently-viewed-section">
+                <h3 class="section-title">Recommendations</h3>
+                <div class="recent-grid">
+                    {{range .Recommendations}}
+                    <a href="/car/{{.ID}}" class="recent-card">
+                        <div class="recent-image">
+                            <img
+                                src="http://localhost:3000/api/images/{{.Image}}"
+                                alt="{{.Name}}"
+                            />
+                        </div>
+                        <div class="recent-info">
+                            <h4>{{.Name}}</h4>
+                            <p class="recent-meta">
+                                <span>{{.Year}}</span>
+                                {{if .Manufacturer}} •
+                                <span>{{.Manufacturer.Name}}</span>{{end}}
+                            </p>
+                        </div>
+                    </a>
+                    {{end}}
+                </div>
+            </div>
+            {{end}}
         </div>
     </body>
 </html>

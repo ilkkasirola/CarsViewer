@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"html/template"
 	"log"
 	"net/http"
@@ -103,14 +104,33 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "cannot get recently viewed", http.StatusInternalServerError)
 		return
 	}
+	resp, err := http.Get("http://localhost:3000/api/models")
+	if err != nil {
+		log.Printf("failed to fetch models from API: %v", err)
+		http.Error(w, "cannot get models", http.StatusInternalServerError)
+		return
+	}
+	defer resp.Body.Close()
+
+	var allCars []CarModel
+	if err := json.NewDecoder(resp.Body).Decode(&allCars); err != nil {
+		log.Printf("failed to decode models JSON: %v", err)
+		http.Error(w, "cannot deode models", http.StatusInternalServerError)
+	}
+	recs, err := giveRecommendations(recents, allCars, 10)
+	if err != nil {
+		log.Printf("reccommendations error: %v", err)
+		recs = []CarModel{}
+	}
 
 	backURL := getFilterBackURL(r)
 
 	data := CarPage{
-		Lookup:         lookup,
-		Car:            car,
-		RecentlyViewed: recents,
-		BackURL:        backURL,
+		Lookup:          lookup,
+		Car:             car,
+		RecentlyViewed:  recents,
+		Recommendations: recs,
+		BackURL:         backURL,
 	}
 
 	if err := templates.ExecuteTemplate(w, "car.html", data); err != nil {

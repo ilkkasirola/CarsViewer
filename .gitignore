@@ -12,8 +12,8 @@
 !*.go
 !go.sum
 !go.mod
-*.html
-*.css
+!*.html
+!*.css
 !README.md
 !LICENSE
 
