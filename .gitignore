@@ -24,3 +24,4 @@
 # BUT: Explicitly re-ignore /api/ and its contents
 /api/
 /api/**
+/testapi/
