@@ -18,6 +18,10 @@ var templates = template.Must(template.ParseFiles(
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
+	if r.URL.Path != "/" {
+		http.NotFound(w, r)
+		return
+	}
 
 	nav, cars, err := fetchHomeData()
 	if err != nil {

@@ -6,7 +6,7 @@
     </head>
     <body>
         <div class="car-detail-header">
-            <a class="btn-back" href="{{.BackURL}}">← Back</a>
+            <a class="btn-back" href="{{.BackURL}}">Back</a>
             <h1 class="page-title">{{.Car.Name}}</h1>
         </div>
 
@@ -24,7 +24,7 @@
             <div class="car-header-info">
                 <div>
                     <h2>{{.Car.Name}}</h2>
-                    <p class="subtitle">{{.Car.Year}} Model Year</p>
+                    <p class="subtitle">{{.Car.Year}}</p>
                 </div>
                 <div class="manufacturer-badge">
                     {{if .Car.Manufacturer}}
@@ -89,14 +89,6 @@
                         <span class="spec-value"
                             >{{.Car.Specs.Drivetrain}}</span
                         >
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Status</span>
-                        <span class="spec-value badge-active">Available</span>
-                    </div>
-                    <div class="spec-item">
-                        <span class="spec-label">Rating</span>
-                        <span class="spec-value rating">★★★★★</span>
                     </div>
                 </div>
             </div>
