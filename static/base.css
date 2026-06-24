@@ -30,31 +30,62 @@ h1 {
 }
 
 .dropbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px; 
+    padding: 10px 20px;
+    background: rgba(255, 85, 0, 0.2);
+    color: var(--neon-orange);
+    border: 1px solid var(--neon-orange);
+    border-radius: 8px;
     font: inherit;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    align-self: center;
-    font-size: 25px;
+    white-space: nowrap;
+    transition: all 0.3s ease;
+}
+
+.dropbtn:hover {
+    background: rgba(255, 85, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(255, 85, 0, 0.3);
 }
 
 .dropdown-content {
     display: none;
     position: absolute;
-    background-color: white;
-    font-size: 15px;
-    padding: 15px;
+    z-index: 10;
+    background: linear-gradient(135deg, #1a1d24 0%, #242933 50%, #0f1117 100%);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 12px;
+    box-shadow:
+        0 8px 32px rgba(0, 0, 0, 0.6),
+        inset 0 1px 0 rgba(255, 255, 255, 0.1);
+    font-size: 14px;
+    padding: 20px;
+    margin-top: 8px;
 }
 
 .dropdown-content input[type="checkbox"] {
-    width: 22px;
-    height: 22px;
+    width: 18px;
+    height: 18px;
+    accent-color: var(--neon-orange);
+    cursor: pointer;
 }
 
 .dropdown-content label {
     display: flex;
     align-items: center;
-    gap: 8px;
-    padding-bottom: 20px;
+    gap: 10px;
+    padding: 6px 0;
     white-space: nowrap;
+    color: var(--text-main);
+    cursor: pointer;
+    transition: color 0.2s ease;
+}
+
+.dropdown-content label:hover {
+    color: var(--neon-orange);
 }
 
 .filter-columns {
@@ -63,7 +94,11 @@ h1 {
 }
 
 .filter-column h3 {
-    margin: 0 0 10px 0;
+    margin: 0 0 12px 0;
+    color: var(--neon-orange);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
 }
 
 .dropdown-content.show {
@@ -72,21 +107,40 @@ h1 {
 
 .applybtn,
 .clearbtn {
-    background-color: grey;
     width: 120px;
     padding: 10px 0;
-    margin: 5px 10px;
+    margin: 5px 0;
     box-sizing: border-box;
-    font-size: 20px;
+    font-size: 14px;
+    font-weight: 600;
     cursor: pointer;
-    border: none;
-    display: inline-block;
+    border-radius: 8px;
+    display: block;
     text-align: center;
+    transition: all 0.3s ease;
+}
+
+.applybtn {
+    background: linear-gradient(135deg, var(--neon-orange) 0%, #ff7722 100%);
+    color: white;
+    border: none;
+}
+
+.applybtn:hover {
+    box-shadow: 0 4px 12px rgba(255, 85, 0, 0.4);
+    transform: translateY(-2px);
 }
 
 .clearbtn {
-    color: white;
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--text-main);
+    border: 1px solid rgba(255, 255, 255, 0.2);
     text-decoration: none;
+}
+
+.clearbtn:hover {
+    background: rgba(255, 255, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.3);
 }
 
 @view-transition {
