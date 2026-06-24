@@ -143,3 +143,25 @@ body > h1 {
     text-transform: uppercase;
     letter-spacing: 2px;
 }
+
+.retro-sign {
+    font-family: "Bebas Neue", cursive;
+    font-size: 4rem;
+    color: #fff;
+    text-transform: uppercase;
+    text-shadow:
+        0 0 5px #fff,
+        0 0 10px #fff,
+        0 0 20px #ff00de,
+        0 0 40px #ff00de,
+        0 0 80px #ff00de;
+    animation: flicker 0.5s infinite alternate;
+
+    @keyframes flicker {
+      0%, 19%, 21%, 23%, 25%, 54%, 56%, 100% {
+        opacity: 1;
+      }
+      20%, 24%, 55% {
+        opacity: 0.5;
+      }
+    }
