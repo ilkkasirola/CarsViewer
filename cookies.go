@@ -5,6 +5,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -25,6 +26,67 @@ func getFilterBackURL(r *http.Request) string {
 		}
 	}
 	return "/"
+}
+
+func addToCompare(w http.ResponseWriter, r *http.Request, currentID int) {
+
+	var compareID = getCompareIDs(r)
+
+	if !slices.Contains(compareID, currentID) && len(compareID) < 2 {
+		compareID = append(compareID, currentID)
+	}
+
+	var parts []string
+	for _, id := range compareID {
+		parts = append(parts, strconv.Itoa(id))
+	}
+
+	newValue := strings.Join(parts, ",")
+	http.SetCookie(w, &http.Cookie{
+		Name:  "compareID",
+		Value: newValue,
+		Path:  "/",
+	})
+
+}
+
+func removeFromCompare(w http.ResponseWriter, r *http.Request, currentID int) {
+	var compareID = getCompareIDs(r)
+
+	var filtered []int
+	for _, id := range compareID {
+		if id != currentID {
+			filtered = append(filtered, id)
+		}
+	}
+
+	var parts []string
+	for _, id := range filtered {
+		parts = append(parts, strconv.Itoa(id))
+	}
+
+	newValue := strings.Join(parts, ",")
+	http.SetCookie(w, &http.Cookie{
+		Name:  "compareID",
+		Value: newValue,
+		Path:  "/",
+	})
+}
+
+func getCompareIDs(r *http.Request) []int {
+	var ids []int
+	if car, err := r.Cookie("compareID"); err == nil && car.Value != "" {
+		for _, s := range strings.Split(car.Value, ",") {
+			if s == "" {
+				continue
+			}
+			if id, err := strconv.Atoi(s); err == nil {
+				ids = append(ids, id)
+			}
+		}
+	}
+	return ids
+
 }
 
 func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, maxN int) ([]CarModel, error) {
