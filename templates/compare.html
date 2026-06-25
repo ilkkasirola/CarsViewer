@@ -1,0 +1,62 @@
+<html>
+    <head>
+        <title>Compare</title>
+        <link rel="stylesheet" href="/static/base.css" />
+        <link rel="stylesheet" href="/static/car.css" />
+    </head>
+    <body>
+        <div class="car-detail-header">
+            <a class="btn-back" href="{{.BackURL}}">Back</a>
+            <h1 class="page-title">Compare</h1>
+        </div>
+
+        <div class="car-detail-container">
+            {{if .Cars}}
+            <div class="compare-grid">
+                {{range .Cars}}
+                <div class="compare-slot">
+                    <div class="car-hero">
+                        <img
+                            src="http://localhost:3000/api/images/{{.Image}}"
+                            alt="{{.Name}}"
+                            class="hero-image"
+                        />
+                    </div>
+                    <div class="compare-name-row">
+                        <h2 class="compare-car-name">{{.Name}}</h2>
+                        <form method="POST" action="/compare/remove/{{.ID}}">
+                            <button class="btn-back" type="submit">Remove</button>
+                        </form>
+                    </div>
+                    <p class="subtitle">{{.Year}}</p>
+
+                    <div class="spec-sheet">
+                        <h3 class="spec-title">Specifications</h3>
+                        <div class="compare-spec-list">
+                            <div class="spec-item">
+                                <span class="spec-label">Engine</span>
+                                <span class="spec-value">{{.Specs.Engine}}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Horsepower</span>
+                                <span class="spec-value">{{.Specs.Horsepower}} HP</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Transmission</span>
+                                <span class="spec-value">{{.Specs.Transmission}}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-label">Drivetrain</span>
+                                <span class="spec-value">{{.Specs.Drivetrain}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{end}}
+            </div>
+            {{else}}
+            <p class="compare-empty">No cars selected for comparison.</p>
+            {{end}}
+        </div>
+    </body>
+</html>
