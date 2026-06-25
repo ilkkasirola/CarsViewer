@@ -1,28 +1,27 @@
-# Allowlisting gitignore template for GO projects prevents us
-# from adding various unwanted local files, such as generated
-# files, developer configurations or IDE-specific files etc.
-#
-# Recommended: Go.AllowList.gitignore
-# Ignore everything
-*
+# # Allowlisting gitignore template for GO projects prevents us
+# # from adding various unwanted local files, such as generated
+# # files, developer configurations or IDE-specific files etc.
+# #
+# # Recommended: Go.AllowList.gitignore
+# # Ignore everything
+# *
 
-# But not these files...
-!/.gitignore
+# # But not these files...
+# !/.gitignore
 
-!*.go
-!go.sum
-!go.mod
-!*.html
-!*.css
-!README.md
-!LICENSE
+# !*.go
+# !go.sum
+# !go.mod
+# !*.html
+# !*.css
+# !README.md
+# !LICENSE
+# !*/testapi/
+# # !Makefile
 
-# !Makefile
-
-# ...even if they are in subdirectories
-!*/
-# BUT: Explicitly re-ignore /api/ and its contents
-/api/
-/api/**
-/testapi/
-/tmp/
+# # ...even if they are in subdirectories
+# !*/
+# # BUT: Explicitly re-ignore /api/ and its contents
+# /api/
+# /api/**
+# /tmp/
