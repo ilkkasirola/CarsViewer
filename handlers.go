@@ -14,7 +14,7 @@ var templates = template.Must(template.ParseFiles(
 	"templates/index.html",
 	"templates/car.html",
 	"templates/topnav.html",
-	"templates/compare.html",
+	// "templates/compare.html",
 ))
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -118,7 +118,7 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		log.Printf("failed to decode models JSON: %v", err)
 		http.Error(w, "cannot deode models", http.StatusInternalServerError)
 	}
-	recs, err := giveRecommendations(recents, allCars, 10)
+	recs, err := giveRecommendations(recents, allCars, 5)
 	if err != nil {
 		log.Printf("reccommendations error: %v", err)
 		recs = []CarModel{}
@@ -145,29 +145,29 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func comparePageHandler(w http.ResponseWriter, r *http.Request) {
-	compareIDs := getCompareIDs(r)
+// func comparePageHandler(w http.ResponseWriter, r *http.Request) {
+// 	compareIDs := getCompareIDs(r)
 
-	var cars []CarModel
-	for _, id := range compareIDs {
-		_, car, err := fetchCarData(strconv.Itoa(id))
-		if err != nil {
-			http.Error(w, "fetching failed", http.StatusInternalServerError)
-			return
-		}
-		cars = append(cars, car)
-	}
+// 	var cars []CarModel
+// 	for _, id := range compareIDs {
+// 		_, car, err := fetchCarData(strconv.Itoa(id))
+// 		if err != nil {
+// 			http.Error(w, "fetching failed", http.StatusInternalServerError)
+// 			return
+// 		}
+// 		cars = append(cars, car)
+// 	}
 
-	backURL := getFilterBackURL(r)
+// 	backURL := getFilterBackURL(r)
 
-	data := ComparePage{
-		Cars:    cars,
-		BackURL: backURL,
-	}
-	if err := templates.ExecuteTemplate(w, "compare.html", data); err != nil {
-		log.Printf("template exectue error: %v", err)
-	}
-}
+// 	data := ComparePage{
+// 		Cars:    cars,
+// 		BackURL: backURL,
+// 	}
+// 	if err := templates.ExecuteTemplate(w, "compare.html", data); err != nil {
+// 		log.Printf("template exectue error: %v", err)
+// 	}
+// }
 
 func compareAddHandler(w http.ResponseWriter, r *http.Request) {
 
