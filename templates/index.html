@@ -41,12 +41,14 @@
                             class="modal-car-image"
                         />
                         <h2>{{.Name}}</h2>
+                         <p class="model-info">Year: {{.Year}}</p>
+                
                         <div class="modal-actions">
                             <a href="/car/{{.ID}}" class="btn-view-details"
                                 >View Full Details</a
                             >
                             <button
-                                onclick="this.closest('dialog').close()"
+                                onclick="this.closest('dialog').close()" 
                                 class="btn-close"
                             >
                                 Close

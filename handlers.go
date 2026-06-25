@@ -79,9 +79,20 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		http.Error(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+
 	lookup, car, err := fetchCarData(id)
 	if err != nil {
 		http.Error(w, "fetching failed", http.StatusInternalServerError)
+		return
+	}
+
+	if idInt != car.ID {
+		http.Error(w, "invalid id", http.StatusBadRequest)
 		return
 	}
 
