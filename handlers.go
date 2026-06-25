@@ -14,6 +14,7 @@ var templates = template.Must(template.ParseFiles(
 	"templates/index.html",
 	"templates/car.html",
 	"templates/topnav.html",
+	"templates/compare.html",
 ))
 
 func homeHandler(w http.ResponseWriter, r *http.Request) {
@@ -123,6 +124,10 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		recs = []CarModel{}
 	}
 
+	compareIDs := getCompareIDs(r)
+	inCompare := slices.Contains(compareIDs, car.ID)
+	compareFull := len(compareIDs) >= 2
+
 	backURL := getFilterBackURL(r)
 
 	data := CarPage{
@@ -131,11 +136,76 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		RecentlyViewed:  recents,
 		Recommendations: recs,
 		BackURL:         backURL,
+		InCompare:       inCompare,
+		CompareFull:     compareFull,
 	}
 
 	if err := templates.ExecuteTemplate(w, "car.html", data); err != nil {
 		log.Printf("template execute error: %v", err)
 	}
+}
+
+func comparePageHandler(w http.ResponseWriter, r *http.Request) {
+	compareIDs := getCompareIDs(r)
+
+	var cars []CarModel
+	for _, id := range compareIDs {
+		_, car, err := fetchCarData(strconv.Itoa(id))
+		if err != nil {
+			http.Error(w, "fetching failed", http.StatusInternalServerError)
+			return
+		}
+		cars = append(cars, car)
+	}
+
+	backURL := getFilterBackURL(r)
+
+	data := ComparePage{
+		Cars:    cars,
+		BackURL: backURL,
+	}
+	if err := templates.ExecuteTemplate(w, "compare.html", data); err != nil {
+		log.Printf("template exectue error: %v", err)
+	}
+}
+
+func compareAddHandler(w http.ResponseWriter, r *http.Request) {
+
+	id := strings.TrimPrefix(r.URL.Path, "/compare/add/")
+	if id == "" {
+		http.Error(w, "missing id", http.StatusBadRequest)
+		return
+	}
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		log.Printf("unable to convert id: %v", err)
+		http.Error(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	addToCompare(w, r, idInt)
+	http.Redirect(w, r, "/car/"+id, http.StatusSeeOther)
+
+}
+
+func compareRemoveHandler(w http.ResponseWriter, r *http.Request) {
+	id := strings.TrimPrefix(r.URL.Path, "/compare/remove/")
+	if id == "" {
+		http.Error(w, "missing id", http.StatusBadRequest)
+		return
+	}
+
+	idInt, err := strconv.Atoi(id)
+	if err != nil {
+		log.Printf("unable to convert id: %v", err)
+		http.Error(w, "invalid id", http.StatusBadRequest)
+		return
+	}
+
+	removeFromCompare(w, r, idInt)
+	http.Redirect(w, r, "/compare", http.StatusSeeOther)
+
 }
 
 func parseIDs(values []string) ([]int, error) {

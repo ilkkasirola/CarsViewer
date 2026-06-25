@@ -220,4 +220,5 @@ body > h1 {
         0 0 20px var(--neon-orange),
         0 0 40px var(--neon-orange),
         0 0 80px var(--neon-orange);
-        cursor: pointer;
+    cursor: pointer;
+}

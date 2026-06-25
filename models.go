@@ -10,7 +10,14 @@ type CarPage struct {
 	RecentlyViewed  []CarModel
 	Recommendations []CarModel
 	Car             CarModel
+	InCompare       bool
+	CompareFull     bool
 	BackURL         string
+}
+
+type ComparePage struct {
+	Cars    []CarModel
+	BackURL string
 }
 
 type Manufacturer struct {

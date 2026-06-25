@@ -26,7 +26,18 @@
             <!-- Car Title & Manufacturer Info -->
             <div class="car-header-info">
                 <div>
-                    <h2>{{.Car.Name}}</h2>
+                    <div class="compare-name-row">
+                        <h2>{{.Car.Name}}</h2>
+                        <form method="POST" action="/compare/add/{{.Car.ID}}">
+                            {{if .InCompare}}
+                                <button class="btn-back" disabled>Added</button>
+                            {{else if .CompareFull}}
+                                <button class="btn-back" disabled>Compare Full</button>
+                            {{else}}
+                                <button class="btn-back" type="submit">+ Add to Compare</button>
+                            {{end}}
+                        </form>
+                    </div>
                     <p class="subtitle">{{.Car.Year}}</p>
                 </div>
                 <div class="manufacturer-badge">
