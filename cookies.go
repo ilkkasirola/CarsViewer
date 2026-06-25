@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/url"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -165,4 +166,59 @@ func getRecentlyViewed(w http.ResponseWriter, r *http.Request, currentID int, ma
 		}
 	}
 	return recentViewed, nil
+}
+
+func giveRecommendations(recents []CarModel, allCars []CarModel, maxN int) ([]CarModel, error) {
+	if len(recents) == 0 || maxN <= 0 {
+		return []CarModel{}, nil
+	}
+	seen := map[int]struct{}{}
+	countries := map[string]struct{}{}
+	categories := map[int]struct{}{}
+	hpCounts := map[int]int{}
+
+	for _, r := range recents {
+		seen[r.ID] = struct{}{}
+		if r.Manufacturer != nil && r.Manufacturer.Country != "" {
+			countries[r.Manufacturer.Country] = struct{}{}
+		}
+		if r.CategoryID != 0 {
+			categories[r.CategoryID] = struct{}{}
+		}
+		if r.Specs.Horsepower > 0 {
+			hpCounts[r.Specs.Horsepower]++
+		}
+	}
+	score := func(c CarModel) int {
+		s := 0
+		if c.Manufacturer != nil {
+			if _, ok := countries[c.Manufacturer.Country]; ok && c.Manufacturer.Country != "" {
+				s += 100
+			}
+		}
+		if c.CategoryID != 0 {
+			if _, ok := categories[c.CategoryID]; ok {
+				s += 3
+			}
+		}
+		if c.Specs.Horsepower > 0 {
+			s += hpCounts[c.Specs.Horsepower] * 2
+		}
+		return s
+	}
+	cands := make([]CarModel, 0, len(allCars))
+	for _, c := range allCars {
+		if _, ok := seen[c.ID]; !ok {
+			cands = append(cands, c)
+		}
+	}
+
+	sort.Slice(cands, func(i, j int) bool {
+		return score(cands[i]) > score(cands[j])
+	})
+
+	if len(cands) > maxN {
+		cands = cands[:maxN]
+	}
+	return cands, nil
 }
