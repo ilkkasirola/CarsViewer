@@ -130,6 +130,7 @@ func comparePageHandler(w http.ResponseWriter, r *http.Request) {
 
 	var cars []CarModel
 	for _, id := range compareIDs {
+		// no manufacturer or category data used atm so using the "_" here below
 		_, car, err := fetchCarData(strconv.Itoa(id))
 		if err != nil {
 			http.Error(w, "fetching failed", http.StatusInternalServerError)
