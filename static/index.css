@@ -97,7 +97,6 @@ img {
 
 /* Dialog / Modal Styles */
 
-
 .car-modal {
     border: none;
     border-radius: 20px;
@@ -128,7 +127,7 @@ img {
 }
 
 .model-info {
-        background: linear-gradient(135deg, #1a1d24 0%, #242933 50%, #0f1117 100%);
+    background: linear-gradient(135deg, #1a1d24 0%, #242933 50%, #0f1117 100%);
     padding: 40px;
     border-radius: 20px;
     border: 1px solid rgba(255, 255, 255, 0.1);
