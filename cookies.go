@@ -160,7 +160,6 @@ func giveRecommendations(recents []CarModel, allCars []CarModel, maxN int) ([]Ca
 	seen := map[int]struct{}{}
 	manufacturers := map[int]struct{}{}
 	categories := map[int]struct{}{}
-	hpCounts := map[int]int{}
 
 	for _, r := range recents {
 		seen[r.ID] = struct{}{}
@@ -169,9 +168,6 @@ func giveRecommendations(recents []CarModel, allCars []CarModel, maxN int) ([]Ca
 		}
 		if r.CategoryID != 0 {
 			categories[r.CategoryID] = struct{}{}
-		}
-		if r.Specs.Horsepower > 0 {
-			hpCounts[r.Specs.Horsepower]++
 		}
 	}
 	score := func(c CarModel) int {
@@ -186,9 +182,7 @@ func giveRecommendations(recents []CarModel, allCars []CarModel, maxN int) ([]Ca
 				s += 3
 			}
 		}
-		if c.Specs.Horsepower > 0 {
-			s += hpCounts[c.Specs.Horsepower] * 2
-		}
+
 		return s
 	}
 	cands := make([]CarModel, 0, len(allCars))
