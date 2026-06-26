@@ -119,6 +119,7 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(resp.Body).Decode(&allCars); err != nil {
 		log.Printf("failed to decode models JSON: %v", err)
 		http.Error(w, "cannot deode models", http.StatusInternalServerError)
+		return
 	}
 	recents, err := getRecentlyViewed(w, r, car.ID, allCars, 5)
 	if err != nil {
