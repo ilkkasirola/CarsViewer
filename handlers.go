@@ -107,12 +107,6 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	recents, err := getRecentlyViewed(w, r, car.ID, 5)
-	if err != nil {
-		log.Printf("getRecently error: %v", err)
-		http.Error(w, "cannot get recently viewed", http.StatusInternalServerError)
-		return
-	}
 	resp, err := http.Get("http://localhost:3000/api/models")
 	if err != nil {
 		log.Printf("failed to fetch models from API: %v", err)
@@ -125,6 +119,12 @@ func carHandler(w http.ResponseWriter, r *http.Request) {
 	if err := json.NewDecoder(resp.Body).Decode(&allCars); err != nil {
 		log.Printf("failed to decode models JSON: %v", err)
 		http.Error(w, "cannot deode models", http.StatusInternalServerError)
+	}
+	recents, err := getRecentlyViewed(w, r, car.ID, allCars, 5)
+	if err != nil {
+		log.Printf("getRecently error: %v", err)
+		http.Error(w, "cannot get recently viewed", http.StatusInternalServerError)
+		return
 	}
 	recs, err := giveRecommendations(recents, allCars, 5)
 	if err != nil {
