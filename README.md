@@ -21,7 +21,7 @@ Website that showcases information about different car models and their specific
     - Filter cars on main page by choosing which models or categories to show.
 
 - Comparison
-    - Comparison page for two cars to  compare side by side. 
+    - Comparison page for two cars to compare side by side. 
 
 - Recently viewed
     - Section showing up to 5 cars the user has recently viewed.
