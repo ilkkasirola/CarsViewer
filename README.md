@@ -8,8 +8,27 @@
 4. Node.js (v24.18.0 or later) installed
 5. Npm (v11.16.0 or later) installed
 
-## Usage
+6. In terminal navigate to your downloaded api folder. Launch your api server in terminal with commands ```make build``` and ```make run```
+7. Open another terminal. Navigate to your cloned project folder and launch your web server with command ```go run .```
+8. Web page can be accessed in a web browser with URL: ```http://localhost:8080/```
 
-1. In terminal navigate to your downloaded api folder. Launch your api server in terminal with commands ```make build``` and ```make run```
-2. Open another terminal. Navigate to your cloned project folder and launch your web server with command ```go run .```
-3. Web page can be accessed in a web browser with URL: ```http://localhost:8080/```
+
+
+## Features
+- Fetches car information from an API
+- Home page lists all cars
+- Full details for every specific car
+- Advanced filtering with checkboxes for Manufacturer and Category
+- Compare cars (max **2**) show the cars dtails side by side
+- Recently viewed cars (max **5**) at bottom of the car page
+- Recommendations based on the users recently viewed cars
+
+## Usage
+- Click a car to open a popup card
+- From the popup card, open a full details page for that car
+  - Chose to add or remove a car to compare
+  - Recently viewed cars and Reommendations on to bottom of the page
+- Filter cars on the home page (checkboxes) by:
+  - Manufacturer
+  - Category e.g., SUV, Sedan, Hatchback
+- Choose compare to navigate to compare page
