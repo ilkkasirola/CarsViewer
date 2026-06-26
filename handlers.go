@@ -46,10 +46,7 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	nav.SelectedCategories = categoryIDs
 	nav.SelectedManufacturers = manufacturerIDs
 
-	//save filters from main page
-	if r.URL.Path == "/" {
-		saveFiltersCookie(w, r.URL.RawQuery)
-	}
+	saveFiltersCookie(w, r.URL.RawQuery)
 
 	var filtered []CarModel
 	for _, c := range cars {

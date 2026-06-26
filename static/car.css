@@ -214,25 +214,6 @@
     font-weight: 700;
 }
 
-/* Badge styles within specs */
-.badge-active {
-    display: inline-block;
-    background: linear-gradient(135deg, var(--neon-cyan) 0%, #00c9ff 100%);
-    color: #0a0d12;
-    padding: 4px 12px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    width: fit-content;
-}
-
-.rating {
-    color: var(--neon-orange);
-    font-size: 18px;
-    letter-spacing: 2px;
-}
-
 /* Recently Viewed Section */
 .recently-viewed-section {
     margin-top: 40px;

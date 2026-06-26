@@ -16,10 +16,6 @@ h1 {
     gap: 30px;
 }
 
-.btn {
-    font-size: 25px;
-}
-
 .topnav form {
     display: flex;
     gap: 30px;
@@ -196,14 +192,6 @@ body > h1 {
     font-size: 32px;
     text-transform: uppercase;
     letter-spacing: 2px;
-}
-
-.title-link {
-    display: block;
-    position: relative;
-    width: 100%;
-    z-index: 10;
-    text-decoration: none;
 }
 
 .retro-sign {
